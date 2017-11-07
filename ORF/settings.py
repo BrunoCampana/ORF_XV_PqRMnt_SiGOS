@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'ORF.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test_data',
+        'NAME': 'sigos',
         'USER': 'root',
         'PASSWORD': 'toor',
         'TEST': {
