@@ -25,7 +25,7 @@ SECRET_KEY = '@*g54zawse5k0irp(s3mf42l_6tekh1_)xu58cj!vr=r*gp1kj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -76,8 +76,13 @@ WSGI_APPLICATION = 'ORF.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'test_data',
+        'USER': 'root',
+        'PASSWORD': 'toor',
+        'TEST': {
+            'CHARSET': 'utf8',
+        },
     }
 }
 
