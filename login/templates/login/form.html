@@ -1,0 +1,20 @@
+{% extends "login/base.html" %}
+
+{% block head %}
+    {{ headCode|safe }}
+{%  endblock %}
+
+{% block body %}
+<div>
+    <form method="post">
+    <div>
+        {% csrf_token %}
+        {{ form }}
+
+
+        {{ form.non_field_errors }}
+        <input type="submit" value="{{ submitValue }}">
+    </div>
+    </form>
+</div>
+{% endblock %}
