@@ -1,10 +1,18 @@
 from django.db import models
 
 # Create your models here.
+class Sistema(models.Model):
+    descricao = models.TextField(max_length=255)
+    classe = models.IntegerField()
+
+class Subsistemas(models.Model):
+    descricao = models.TextField(max_length=255)
+    classe = models.IntegerField()
+
 class ordemDeServico(models.Model):
-	
+
 	#datas salvas
-	aguardando_ciente_date = models.DateTimeField('data aguardando ciente')
+    aguardando_ciente_date = models.DateTimeField('data aguardando ciente')
     aguardando_inspecao_date = models.DateTimeField('data aguardando inspecao')
     realizando_inspecao_date = models.DateTimeField('data realizando inspecao')
     aguardando_manutencao_date = models.DateTimeField('data aguardando manutencao')
@@ -44,14 +52,6 @@ class ordemDeServico(models.Model):
     #Chaves estrangeiras
     sistema = models.ForeignKey(Sistema)
     subsistemas_manutenidos = models.ManyToManyField(Subsistemas)
-    ch_cp = models.ForeignKey('login.User', related_name='Ch_CP')
-    ch_classe = models.ForeignKey('login.User', related_name='Ch_Classe')
-    cmt_pel = models.ForeignKey('login.User', related_name='Cmt_Pel')
-
-class Subsistemas(models.Model):
-	descricao = models.TextField(max_length=255)
-	classe = models.IntegerField()
-
-class Sistema(models.Model):
-	descricao = models.TextField(max_length=255)
-	classe = models.IntegerField()
+    ch_cp = models.ForeignKey('login.InformacaoMilitar', related_name='Ch_CP')
+    ch_classe = models.ForeignKey('login.InformacaoMilitar', related_name='Ch_Classe')
+    cmt_pel = models.ForeignKey('login.InformacaoMilitar', related_name='Cmt_Pel')
