@@ -1,18 +1,11 @@
 {% extends "adminlte/login.html" %}
 
-{% block head %}
-    {{ headCode|safe }}
-{%  endblock %}
-
-{% block body %}
-<div>
+{% block logo_text %}<b>SIGOS</b>{% endblock %}
+{% block form %}
     <form method="post">
-    <div>
         {% csrf_token %}
-        {{ form }}
-
+        {{ form  }}
         <input type="submit" value="{{ submitValue }}">
-    </div>
     </form>
-</div>
 {% endblock %}
+

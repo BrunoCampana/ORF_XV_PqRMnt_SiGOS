@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sigos',
         'USER': 'root',
-        'PASSWORD': 'toor',
+        'PASSWORD': 'senha123',
         'TEST': {
             'CHARSET': 'utf8',
         },
