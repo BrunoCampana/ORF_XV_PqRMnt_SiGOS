@@ -1,4 +1,6 @@
 from django.db import models
+#Limitação de tipos
+CLASSES_CHOICE = ()
 
 # Create your models here.
 class Sistema(models.Model):
