@@ -25,6 +25,7 @@ class OrdemDeServico(models.Model):
     aguardando_remessa_date = models.DateTimeField('data aguardando remessa')
     fechada_sem_ciente_date = models.DateTimeField('data fechada sem ciente')
     fechada_arquivar_date = models.DateTimeField('data fechada arquivar')
+    realizacao_servico_date = models.DateTimeField('data realizacao servico')
     
     #atributos
     tipo = models.IntegerField()
