@@ -1,3 +1,18 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth import get_user_model
+
+from login.models import InformacaoMilitar
+
+class InfoMilInline(admin.StackedInline):
+    model = InformacaoMilitar
+    can_delete = False
+    verbose_name_plural = 'Informação Militar'
+
+class UserAdmin(BaseUserAdmin):
+    inlines = (InfoMilInline, )
+
+admin.site.unregister(get_user_model())
+admin.site.register(get_user_model(), UserAdmin)
 
 # Register your models here.

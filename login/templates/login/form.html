@@ -11,8 +11,6 @@
         {% csrf_token %}
         {{ form }}
 
-
-        {{ form.non_field_errors }}
         <input type="submit" value="{{ submitValue }}">
     </div>
     </form>
