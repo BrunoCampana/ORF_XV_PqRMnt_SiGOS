@@ -9,7 +9,7 @@ class Subsistemas(models.Model):
     descricao = models.TextField(max_length=255)
     classe = models.IntegerField()
 
-class ordemDeServico(models.Model):
+class OrdemDeServico(models.Model):
 
 	#datas salvas
     aguardando_ciente_date = models.DateTimeField('data aguardando ciente')
