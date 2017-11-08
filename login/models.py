@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 # Create your models here.
 
 class InformacaoMilitar(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     posto = models.CharField(max_length=10)
     om = models.CharField(max_length=50)
 
