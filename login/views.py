@@ -17,8 +17,8 @@ def login(request):
             if user is not None:
                 auth_login(request, user)
                 print(request)
-                #return redirect('/temploged')
-                return render(request, 'login/temploged.html', {})
+                return redirect('/ordemservico/caixa')
+                #return render(request, 'login/temploged.html', {})
             else:
                 form.add_error(None, 'Usuário ou senha incorretos.')
     else:
