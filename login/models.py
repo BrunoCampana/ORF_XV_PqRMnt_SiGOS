@@ -36,6 +36,10 @@ post_save.connect(inserir_infoMil, sender=settings.AUTH_USER_MODEL)
 
 
 class Funcao(models.Model):
-    militar = models.ForeignKey(User)
+    militar = models.ForeignKey(User, null=True, blank=True)
     nome_funcao = models.IntegerField(choices=NOME_FUNCAO_CHOICES)
     classe = models.IntegerField(choices=CLASSE_CHOICES)
+
+    def __str__(self):
+       return u'%s' % (NOME_FUNCAO_CHOICES[self.nome_funcao][1])
+

@@ -11,19 +11,23 @@ def escolhertipoOS(request):
         form = Tipo(request.POST)
         if form.is_valid():
             tipo = form.cleaned_data['tipo']
-            return redirect("/ordemservico/criar/"+tipo)
+            return redirect("/ordemservico/criar/" + tipo)
         else:
             print(form.errors)
     else:
         form = Tipo()
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Abrir'})
 
+
 def criarordemservico(request, tipo):
+    funcao = getFuncaoMilitar(request.user)
+    classe = funcao["classe"]
+
     if request.method == 'POST':
-        form = OrdemServico(request.POST)
+        form = OrdemServico(request.POST, classe=classe)
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.nr_os = 0
+            instance.nr_os = generateOSNr()
             instance.tipo = tipo
             instance.status = 9
             instance.nd = 0
@@ -38,9 +42,9 @@ def criarordemservico(request, tipo):
         else:
             print(form.errors)
     else:
-        form = OrdemServico()
+        form = OrdemServico(classe=classe)
 
-    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar'})
+    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
 
 
 def caixadeentrada(request):
@@ -57,11 +61,25 @@ def caixadeentrada(request):
 
     return redirect('/login')
 
+# def visualizarOS(request, os_id):
+#     print(os_id)
+#     return redirect("/login")
+#
+
+def getFuncaoMilitar(user):
+    user_id = user.id
+    return Funcao.objects.filter(militar=user_id).values()
+
+
+def getOSfromId(os_id):
+    return OrdemDeServico.objects.filter(id=os_id)
+
+
 def visualizarOS(request, os_id):
     print(os_id)
+    funcao = getFuncaoMilitar(request.user)
+    print(funcao)
     return redirect("/login")
-
-
 '''
 def visualizarOS(request, os_id):
     if request.method == 'POST':
@@ -71,21 +89,19 @@ def visualizarOS(request, os_id):
         os_id = request.POST.get('id')
         os = getOSfromId(os_id)
         if os:
-            #sem função
+            # sem função
             if nome_func != 0:
-                #ch cp ou adj cp
-                if nome_func == 1 || nome_func == 2:
-                    #fazer parte de edição da os (cientes, fechamento, etc)
+                # ch cp ou adj cp
+                if (nome_func == 1 or nome_func == 2):
+                    # fazer parte de edição da os (cientes, fechamento, etc)
                     return render(pagina)
                 else:
-                    if classe == os["classe"]:
-                        #fazer parte de edição da os (cientes, fechamento, etc)
+                    if (classe == os["classe"]):
+                        # fazer parte de edição da os (cientes, fechamento, etc)
                         return render(pagina)
     
     return redirect('/ordemservico/caixa')
 '''
-
-
 def getFuncaoMilitar(user):
     user_id = user.id
     return Funcao.objects.filter(militar=user_id).values()
@@ -93,3 +109,6 @@ def getFuncaoMilitar(user):
 
 def getOSfromId(os_id):
     return OrdemDeServico.objects.filter(id=os_id)
+
+def generateOSNr():
+    return 0
