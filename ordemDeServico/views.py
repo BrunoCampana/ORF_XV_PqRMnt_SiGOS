@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from .forms import OrdemServico, Tipo
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
@@ -20,7 +21,9 @@ def escolhertipoOS(request):
 
 def criarordemservico(request, tipo):
     funcao = getFuncaoMilitar(request.user)
-    classe = funcao["classe"]
+    #classe = funcao.values('classe')
+    classe = funcao[0]['classe']
+    print(classe)
 
     if request.method == 'POST':
         form = OrdemServico(request.POST, classe=classe)
@@ -47,15 +50,18 @@ def criarordemservico(request, tipo):
 
 
 def caixadeentrada(request):
-    if request.method == 'POST':
-        print("previs")
-        print(request.POST)
-        return redirect("/ordemservico/visualizar/")
-    else:
-        data = Sistema.objects.all().filter(
-            classe=7).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
+    alldata = Sistema.objects.all()
+    funcao = getFuncaoMilitar(request.user)
+    if funcao:
+        classe = int(funcao["classe"])
+        if classe != 0:
+		#cada militar ter acesso apenas a sua classe
+            data = alldata.filter(classe=classe).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
+            return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
+        data = alldata.filter(Q()).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
         return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
 
+    return redirect('/login')
 
 # def visualizarOS(request, os_id):
 #     print(os_id)
