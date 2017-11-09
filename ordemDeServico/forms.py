@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, CheckboxSelectMultiple
 from .models import OrdemDeServico
 
 class OrdemServico(ModelForm):
@@ -19,6 +19,10 @@ class OrdemServico(ModelForm):
         'quant_homens',
         'sistema',
         'subsistemas_manutenidos']
+
+        widgets = {
+            'subsistemas_manutenidos': CheckboxSelectMultiple(),
+        }
 
         '''fields = [   'aguardando_ciente_date',
                     'aguardando_inspecao_date',

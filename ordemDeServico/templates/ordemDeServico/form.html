@@ -1,12 +1,39 @@
 {% extends "login/base.html" %}
 
+{% block title %}Ordem de Serviço{% endblock %}
+
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        {% for item in form %}
-            {{ item.label }}
-            {{ item }} <br>
-        {% endfor %}
-        <input type="submit" value="{{ submitValue }}">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title"> <b>ORDEM DE SERVIÇO</b> </h3>
+                </div>
+
+                <form class=form-horizontal method="post">
+                    <div class="box-body">
+                        {% csrf_token %}
+                        {% for item in form %}
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label"> {{ item.label }} </label>
+                                {{ item }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                    <div class="box-footer">
+                        <input type="submit" value="{{ submitValue }}">
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+
+    </div>
+
 {% endblock %}
 
