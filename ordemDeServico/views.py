@@ -53,7 +53,8 @@ def caixadeentrada(request):
     alldata = Sistema.objects.all()
     funcao = getFuncaoMilitar(request.user)
     if funcao:
-        classe = int(funcao["classe"])
+        classe = int(funcao[0]["classe"])
+        print(classe)
         if classe != 0:
 		#cada militar ter acesso apenas a sua classe
             data = alldata.filter(classe=classe).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
