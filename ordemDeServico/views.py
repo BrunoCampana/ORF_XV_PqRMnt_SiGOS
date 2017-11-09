@@ -44,20 +44,22 @@ def criarordemservico(request, tipo):
 
 def caixadeentrada(request):
     if request.method == 'POST':
-        return redirect("/ordemservico/visualizar")
+        print("previs")
+        print(request.POST)
+        return redirect("/ordemservico/visualizar/")
     else:
         data = Sistema.objects.all().filter(
             classe=7).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
         return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
 
 
-def visualizarOS(request):
-    print(request)
+def visualizarOS(request, os_id):
+    print(os_id)
     return redirect("/login")
 
 
 '''
-def visualizarOS(request):
+def visualizarOS(request, os_id):
     if request.method == 'POST':
         funcao = getFuncaoMilitar(request.user)
         classe = funcao["classe"]
