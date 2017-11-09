@@ -6,10 +6,16 @@ CLASSES_CHOICE = ()
 class Sistema(models.Model):
     descricao = models.TextField(max_length=255)
     classe = models.IntegerField()
+    
+    def __str__(self):
+        return u'%s' % (self.descricao)
 
 class Subsistemas(models.Model):
     descricao = models.TextField(max_length=255)
     classe = models.IntegerField()
+
+    def __str__(self):
+        return u'%s' % (self.descricao)
 
 class OrdemDeServico(models.Model):
 
