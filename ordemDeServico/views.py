@@ -20,7 +20,9 @@ def escolhertipoOS(request):
 
 def criarordemservico(request, tipo):
     funcao = getFuncaoMilitar(request.user)
-    classe = funcao["classe"]
+    #classe = funcao.values('classe')
+    classe = funcao[0]['classe']
+    print(classe)
 
     if request.method == 'POST':
         form = OrdemServico(request.POST, classe=classe)
