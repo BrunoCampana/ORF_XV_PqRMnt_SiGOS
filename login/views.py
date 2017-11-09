@@ -18,7 +18,7 @@ def login(request):
                 auth_login(request, user)
                 print(request)
                 return redirect('/ordemservico/caixa')
-                #return render(request, 'login/temploged.html', {})
+
             else:
                 form.add_error(None, 'Usuário ou senha incorretos.')
     else:
