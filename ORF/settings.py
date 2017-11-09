@@ -32,12 +32,13 @@ ALLOWED_HOSTS = ['127.0.0.1']
 
 INSTALLED_APPS = [
     # The general purpose templates
+    'login',
+    'ordemDeServico',
     'django_adminlte',
 
     # Optional: Skin for the admin interface
     'django_adminlte_theme',
-    'login',
-    'ordemDeServico',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
