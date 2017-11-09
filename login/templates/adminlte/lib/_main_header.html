@@ -1,0 +1,17 @@
+{% extends 'adminlte/lib/_main_header.html' %}
+{% load i18n %}
+
+{% block logo_text %}<b>SIGOS</b>{% endblock %}
+{% block logo_text_small %}<b>SIG</b>{% endblock %}
+
+{% block menu_footer %}
+<li class="user-footer">
+    <div class="pull-left">
+        <a href="{% block change_password_url %}{% url 'admin:password_change' %}{% endblock %}"
+           class="btn btn-default btn-flat">{% trans 'Mudar Senha' %}</a>
+    </div>
+    <div class="pull-right">
+        <a href="{% block logout_url %}/logout{% endblock %}" class="btn btn-default btn-flat">Sair</a>
+    </div>
+</li>
+{% endblock %}
