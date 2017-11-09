@@ -18,5 +18,6 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^ordemservico/', views.ordemservico, name="ordemservico"),
+    url(r'^ordemservico/criar', views.criarordemservico, name="criarordemservico"),
+    url(r'^ordemservico/caixa', views.caixadeentrada, name="caixa"),
 ]

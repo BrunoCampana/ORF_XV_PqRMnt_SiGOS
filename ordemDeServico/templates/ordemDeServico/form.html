@@ -1,6 +1,9 @@
-{% extends "ordemDeServico/base.html" %}
+{% extends "login/base.html" %}
 
-{% block body %}
-        {{ form  }}
+{% block content %}
+        {% for item in form %}
+            {{ item.label }}
+            {{ item }} <br>
+        {% endfor %}
 {% endblock %}
 

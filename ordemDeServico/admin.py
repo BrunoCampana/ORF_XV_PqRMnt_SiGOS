@@ -9,5 +9,8 @@ class SistemaAdmin(admin.ModelAdmin):
 class SubsistemasAdmin(admin.ModelAdmin):
     list_display = ('descricao', 'classe')
 
-admin.site.register(Sistema, SistemaAdmin)
-admin.site.register(Subsistemas, SubsistemasAdmin)
+#admin.site.register(Sistema, SistemaAdmin)
+#admin.site.register(Subsistemas, SubsistemasAdmin)
+
+admin.site.register(Sistema)
+admin.site.register(Subsistemas)
