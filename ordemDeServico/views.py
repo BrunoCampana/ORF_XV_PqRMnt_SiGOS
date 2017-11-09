@@ -29,9 +29,15 @@ def criarordemservico(request):
 
 
 def caixadeentrada(request):
-	data = Sistema.objects.all().filter(classe=7).values()  #foi feito apenas para fins de teste. mudar para OrdemDeServico
-	return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
+    if request.method == 'POST':
+        return redirect("/ordemservico/visualizar")
+    else:
+	    data = Sistema.objects.all().filter(classe=7).values()  #foi feito apenas para fins de teste. mudar para OrdemDeServico
+	    return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
 
+def visualizarOS(request):
+    print(request)
+    return redirect("/login")
 '''
 def visualizarOS(request):
     if request.method == 'POST':
