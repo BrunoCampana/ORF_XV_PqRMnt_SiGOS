@@ -1,0 +1,24 @@
+{% extends "login/base.html" %} 
+
+{% block title %} Caixa de Entrada {% endblock %}
+{% block content %}
+	
+	
+	{% csrf_token %} 
+	<table>
+	  <tr>
+	    <th> ID </th>
+  	    <th> DESCRICAO </th>
+	    <th> CLASSE </th>
+	    <th> VISUALIZAR </th>
+	  </tr>
+	   {% for item in data %}
+	    <tr>	 
+		<td>{{ item.nr_os }}</td>
+		<td>{{ item.motivo }}</td>
+		<td>{{ item.abertura_os_date }}</td>
+		<td>{{ item.status }} <a href="/login">Ver OS</a> </td>
+	    </tr>
+	{% endfor %}
+
+{% endblock %} 

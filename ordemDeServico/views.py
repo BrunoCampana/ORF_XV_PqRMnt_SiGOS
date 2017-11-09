@@ -18,6 +18,5 @@ def criarordemservico(request):
 
 
 def caixadeentrada(request):
-	for e in Sistema.objects.all().filter(classe=7).values():  #foi feito apenas para fins de teste. mudar para OrdemDeServico
-		print(e["descricao"])
-	return redirect('/login')
+	data = Sistema.objects.all().filter(classe=7).values()  #foi feito apenas para fins de teste. mudar para OrdemDeServico
+	return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
