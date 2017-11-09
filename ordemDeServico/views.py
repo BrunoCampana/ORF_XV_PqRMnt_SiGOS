@@ -12,4 +12,4 @@ def ordemservico(request):
             
     else:
         form = OrdemServico()
-    return render(request, 'login/form.html', {'form': form, 'submitValue': 'Salvar'})
+    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar'})
