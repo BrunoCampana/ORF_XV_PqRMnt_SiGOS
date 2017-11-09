@@ -20,4 +20,5 @@ from . import views
 urlpatterns = [
     url(r'^ordemservico/criar', views.criarordemservico, name="criarordemservico"),
     url(r'^ordemservico/caixa', views.caixadeentrada, name="caixa"),
+    url(r'^ordemservico/visualizar', views.visualizarOS, name="vizOS"),
 ]

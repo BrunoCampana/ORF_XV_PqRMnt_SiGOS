@@ -1,7 +1,8 @@
 from django.db import models
 
 #Limitação de tipos
-CLASSES_CHOICES = (
+CLASSE_CHOICES = (
+    (0,'Sem Classe'),
     (1,'I'),
     (2,'II'),
     (3,'III'),
@@ -23,20 +24,30 @@ TIPO_CHOICES = (
 )
 
 STATUS_CHOICES = (
-    ('', ''),
+    (1, 'Aguardando ciente'),
+    (2, 'Aguardando inspeção'),
+    (3, 'Realizando inspeção'),
+    (4, 'Aguardando manutenção'),
+    (5, 'Em manutenção'),
+    (6, 'Aguardando testes'),
+    (7, 'Testes em execução'),
+    (8, 'Remanutenção'),
+    (9, 'Aguardando remessa'),
+    (10, 'Fechada - aguardando ciente'),
+    (11, 'Fechada - ciente dado'),
 )
 
 # Create your models here.
 class Sistema(models.Model):
     descricao = models.TextField(max_length=255)
-    classe = models.IntegerField(choices=CLASSES_CHOICES)
+    classe = models.IntegerField(choices=CLASSE_CHOICES)
     
     def __str__(self):
         return u'%s' % (self.descricao)
 
 class Subsistemas(models.Model):
     descricao = models.TextField(max_length=255)
-    classe = models.IntegerField(choices=CLASSES_CHOICES)
+    classe = models.IntegerField(choices=CLASSE_CHOICES)
 
     def __str__(self):
         return u'%s' % (self.descricao)
@@ -76,7 +87,7 @@ class OrdemDeServico(models.Model):
     quantidade = models.IntegerField()
     serv_realizado = models.TextField(blank=True)
     custo_total = models.IntegerField()
-    classe = models.IntegerField()
+    classe = models.IntegerField(choices=CLASSE_CHOICES)
     om_requerente = models.CharField(max_length=255,blank=True)
     ordem_recolhimento = models.CharField(max_length=30,blank=True)
     guia_recolhimento = models.CharField(max_length=30,blank=True)
