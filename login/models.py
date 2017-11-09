@@ -29,7 +29,7 @@ def inserir_infoMil(sender, **kwargs):
         infoMil.save()
 post_save.connect(inserir_infoMil, sender=settings.AUTH_USER_MODEL)
 
-class funcao(models.Model):
+class Funcao(models.Model):
     militar = models.ForeignKey(User)
     nome_funcao = models.IntegerField(choices=NOME_FUNCAO_CHOICES)
     classe = models.IntegerField(choices=CLASSE_CHOICES)
