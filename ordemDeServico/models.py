@@ -1,18 +1,34 @@
 from django.db import models
+
 #Limitação de tipos
-CLASSES_CHOICE = ()
+CLASSES_CHOICES = (
+    (5,'V'),
+    (6,'VI'),
+    (7,'VII'),
+    (9,'IX'),
+)
+
+TIPO_CHOICES = (
+    (0, 'Apoio em conjunto'),
+    (1, 'Apoio direto'),
+    (2, 'Apoio em suprimento'),
+)
+
+STATUS_CHOICES = (
+    ('', ''),
+)
 
 # Create your models here.
 class Sistema(models.Model):
     descricao = models.TextField(max_length=255)
-    classe = models.IntegerField()
+    classe = models.IntegerField(choices=CLASSES_CHOICES)
     
     def __str__(self):
         return u'%s' % (self.descricao)
 
 class Subsistemas(models.Model):
     descricao = models.TextField(max_length=255)
-    classe = models.IntegerField()
+    classe = models.IntegerField(choices=CLASSES_CHOICES)
 
     def __str__(self):
         return u'%s' % (self.descricao)
@@ -34,7 +50,7 @@ class OrdemDeServico(models.Model):
     realizacao_date = models.DateTimeField('data realizacao', blank=True, null=True)
     
     #atributos
-    tipo = models.IntegerField()
+    tipo = models.IntegerField(choices=TIPO_CHOICES)
     status = models.IntegerField()
     nd = models.IntegerField()
     

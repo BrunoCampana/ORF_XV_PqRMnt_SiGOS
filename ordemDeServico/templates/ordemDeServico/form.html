@@ -1,9 +1,12 @@
 {% extends "login/base.html" %}
 
 {% block content %}
+    <form method="post">
+        {% csrf_token %}
         {% for item in form %}
             {{ item.label }}
             {{ item }} <br>
         {% endfor %}
+        <input type="submit" value="{{ submitValue }}">
 {% endblock %}
 
