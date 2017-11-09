@@ -34,8 +34,10 @@ class Subsistemas(models.Model):
         return u'%s' % (self.descricao)
 
 class OrdemDeServico(models.Model):
+    nr_os = models.IntegerField()
 
 	#datas salvas
+    abertura_os_date = models.DateTimeField('data abertura os', blank=True, null=True)
     aguardando_ciente_date = models.DateTimeField('data aguardando ciente', blank=True, null=True)
     aguardando_inspecao_date = models.DateTimeField('data aguardando inspecao', blank=True, null=True)
     realizando_inspecao_date = models.DateTimeField('data realizando inspecao', blank=True, null=True)
