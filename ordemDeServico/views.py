@@ -3,6 +3,7 @@ from .forms import OrdemServico
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 
+
 # Create your views here.
 def criarordemservico(request):
     if request.method == 'POST':
@@ -20,7 +21,7 @@ def criarordemservico(request):
             saved_form = instance.save()
             form.save_m2m()
             print(saved_form)
-            #redirect
+            # redirect
         else:
             print(form.errors)
     else:
@@ -32,12 +33,16 @@ def caixadeentrada(request):
     if request.method == 'POST':
         return redirect("/ordemservico/visualizar")
     else:
-	    data = Sistema.objects.all().filter(classe=7).values()  #foi feito apenas para fins de teste. mudar para OrdemDeServico
-	    return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
+        data = Sistema.objects.all().filter(
+            classe=7).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
+        return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
+
 
 def visualizarOS(request):
     print(request)
     return redirect("/login")
+
+
 '''
 def visualizarOS(request):
     if request.method == 'POST':
@@ -60,9 +65,12 @@ def visualizarOS(request):
     
     return redirect('/ordemservico/caixa')
 '''
+
+
 def getFuncaoMilitar(user):
-        user_id = user.id
-        return Funcao.object.filter(militar=user_id).values()
+    user_id = user.id
+    return Funcao.object.filter(militar=user_id).values()
+
 
 def getOSfromId(os_id):
-        return OrdemDeServico.objects.filter(id=os_id)
+    return OrdemDeServico.objects.filter(id=os_id)

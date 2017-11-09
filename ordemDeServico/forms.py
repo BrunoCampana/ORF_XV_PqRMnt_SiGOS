@@ -1,24 +1,25 @@
 from django.forms import ModelForm, CheckboxSelectMultiple
 from .models import OrdemDeServico
 
+
 class OrdemServico(ModelForm):
     class Meta:
         model = OrdemDeServico
 
-        #Direto
+        # Direto
         fields = ['realizacao_date',
-        'tempo',
-        'pit',
-        'motivo',
-        'desc_material',
-        'quantidade',
-        'serv_realizado',
-        'suprimento_aplicado',
-        'custo_total',
-        'om_requerente',
-        'quant_homens',
-        'sistema',
-        'subsistemas_manutenidos']
+                  'tempo',
+                  'pit',
+                  'motivo',
+                  'desc_material',
+                  'quantidade',
+                  'serv_realizado',
+                  'suprimento_aplicado',
+                  'custo_total',
+                  'om_requerente',
+                  'quant_homens',
+                  'sistema',
+                  'subsistemas_manutenidos']
 
         widgets = {
             'subsistemas_manutenidos': CheckboxSelectMultiple(),
