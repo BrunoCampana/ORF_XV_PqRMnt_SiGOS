@@ -1,16 +1,28 @@
 from django.shortcuts import render, redirect
-from .forms import OrdemServico
+from .forms import OrdemServico, Tipo
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 
 # Create your views here.
-def criarordemservico(request):
+def escolhertipoOS(request):
+    if request.method == 'POST':
+        form = Tipo(request.POST)
+        if form.is_valid():
+            tipo = form.cleaned_data['tipo']
+            return redirect("/ordemservico/criar/"+tipo)
+        else:
+            print(form.errors)
+    else:
+        form = Tipo()
+    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Abrir'})
+
+def criarordemservico(request, tipo):
     if request.method == 'POST':
         form = OrdemServico(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
             instance.nr_os = 0
-            instance.tipo = 0
+            instance.tipo = tipo
             instance.status = 9
             instance.nd = 0
             instance.classe = 5
@@ -25,6 +37,7 @@ def criarordemservico(request):
             print(form.errors)
     else:
         form = OrdemServico()
+
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar'})
 
 
