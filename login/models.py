@@ -11,6 +11,8 @@ NOME_FUNCAO_CHOICES = (
     (3, 'Cmt Pel'),
     (4, 'Chefe Classe'),
 )
+
+
 # Create your models here.
 
 class InformacaoMilitar(models.Model):
@@ -19,7 +21,8 @@ class InformacaoMilitar(models.Model):
     om = models.CharField(max_length=50)
 
     REQUIRED_FIELDS = ['posto', 'om']
-    
+
+
 def inserir_infoMil(sender, **kwargs):
     user = kwargs["instance"]
 
@@ -27,7 +30,10 @@ def inserir_infoMil(sender, **kwargs):
         ### MUDAR ABAIXO PARA VALORES RECEBIDOS. PESQUISAR ###
         infoMil = InformacaoMilitar(user=user, posto='1ten', om='IME')
         infoMil.save()
+
+
 post_save.connect(inserir_infoMil, sender=settings.AUTH_USER_MODEL)
+
 
 class Funcao(models.Model):
     militar = models.ForeignKey(User, null=True, blank=True)
