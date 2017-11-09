@@ -18,11 +18,14 @@ def escolhertipoOS(request):
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Abrir'})
 
 def criarordemservico(request, tipo):
+    funcao = getFuncaoMilitar(request.user)
+    classe = funcao["classe"]
+
     if request.method == 'POST':
-        form = OrdemServico(request.POST)
+        form = OrdemServico(request.POST, classe=classe)
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.nr_os = 0
+            instance.nr_os = generateOSNr()
             instance.tipo = tipo
             instance.status = 9
             instance.nd = 0
@@ -37,9 +40,9 @@ def criarordemservico(request, tipo):
         else:
             print(form.errors)
     else:
-        form = OrdemServico()
+        form = OrdemServico(classe=classe)
 
-    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar'})
+    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
 
 
 def caixadeentrada(request):
@@ -86,6 +89,8 @@ def getFuncaoMilitar(user):
     user_id = user.id
     return Funcao.object.filter(militar=user_id).values()
 
-
 def getOSfromId(os_id):
     return OrdemDeServico.objects.filter(id=os_id)
+
+def generateOSNr():
+    return 0
