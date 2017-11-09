@@ -34,11 +34,7 @@
                         <td>{{ item.id }}</td>
                         <td>{{ item.descricao }}</td>
                         <td>{{ item.classe }}</td>
-                        <td><form method='POST'>
-                            {% csrf_token %}
-                            <button name="os_id" type="submit" value="{{ item.id }}">Ver OS</button>
-                        </form></td>
-                      <!--  <td><a href="/login">Ver OS</a> </td> -->
+                        <td><a href="/ordemservico/visualizar/{{ item.id }}">Ver OS</a> </td>
                     </tr>
                      {% endfor %}
               </tbody></table>
