@@ -4,7 +4,21 @@ from .models import OrdemDeServico
 class OrdemServico(ModelForm):
     class Meta:
         model = OrdemDeServico
-        fields = ['realizacao_servico_date','motivo','desc_material','quantidade','serv_realizado','custo_total','classe','om_requerente','quant_homens','sistema','subsistemas_manutenidos']
+
+        #Direto
+        fields = ['realizacao_date',
+        'tempo',
+        'pit',
+        'motivo',
+        'desc_material',
+        'quantidade',
+        'serv_realizado',
+        'suprimento_aplicado',
+        'custo_total',
+        'om_requerente',
+        'quant_homens',
+        'sistema',
+        'subsistemas_manutenidos']
 
         '''fields = [   'aguardando_ciente_date',
                     'aguardando_inspecao_date',

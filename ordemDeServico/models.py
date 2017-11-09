@@ -6,10 +6,16 @@ CLASSES_CHOICE = ()
 class Sistema(models.Model):
     descricao = models.TextField(max_length=255)
     classe = models.IntegerField()
+    
+    def __str__(self):
+        return u'%s' % (self.descricao)
 
 class Subsistemas(models.Model):
     descricao = models.TextField(max_length=255)
     classe = models.IntegerField()
+
+    def __str__(self):
+        return u'%s' % (self.descricao)
 
 class OrdemDeServico(models.Model):
 
@@ -25,12 +31,21 @@ class OrdemDeServico(models.Model):
     aguardando_remessa_date = models.DateTimeField('data aguardando remessa')
     fechada_sem_ciente_date = models.DateTimeField('data fechada sem ciente')
     fechada_arquivar_date = models.DateTimeField('data fechada arquivar')
-    realizacao_servico_date = models.DateTimeField('data realizacao servico')
+    realizacao_date = models.DateTimeField('data realizacao')
     
     #atributos
     tipo = models.IntegerField()
     status = models.IntegerField()
     nd = models.IntegerField()
+    
+    pit = models.BooleanField()
+    
+    # TODO TEMPO (DURAÇÃO EM APOIO DIRETO)
+    tempo = models.IntegerField()
+    
+    # TODO SUPRIMENTO APLICADO (TEXT-AREA EM ALL)
+    suprimento_aplicado = models.TextField()
+    
     motivo = models.CharField(max_length=255)
     desc_material = models.TextField()
     prioridade = models.IntegerField()
