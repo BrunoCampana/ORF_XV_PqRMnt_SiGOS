@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth import get_user_model
+from login.models import InformacaoMilitar, Funcao
 
-from login.models import InformacaoMilitar
+# Register your models here.
 
 class InfoMilInline(admin.StackedInline):
     model = InformacaoMilitar
@@ -14,5 +15,5 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.unregister(get_user_model())
 admin.site.register(get_user_model(), UserAdmin)
+admin.site.register(Funcao)
 
-# Register your models here.

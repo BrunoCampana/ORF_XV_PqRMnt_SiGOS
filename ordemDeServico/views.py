@@ -52,6 +52,8 @@ def caixadeentrada(request):
 
 def visualizarOS(request, os_id):
     print(os_id)
+    funcao = getFuncaoMilitar(request.user)
+    print(funcao)
     return redirect("/login")
 '''
 def visualizarOS(request, os_id):
@@ -77,7 +79,7 @@ def visualizarOS(request, os_id):
 '''
 def getFuncaoMilitar(user):
         user_id = user.id
-        return Funcao.object.filter(militar=user_id).values()
+        return Funcao.objects.filter(militar=user_id).values()
 
 def getOSfromId(os_id):
         return OrdemDeServico.objects.filter(id=os_id)
