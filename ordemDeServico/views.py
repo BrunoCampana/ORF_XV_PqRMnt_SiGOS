@@ -6,9 +6,12 @@ from .models import Sistema #mudar OrdemDeServico
 def criarordemservico(request):
     if request.method == 'POST':
         form = OrdemServico(request.POST)
-	#if form.is_valid():
-        saved_form = form.save()
-        print(saved_form)
+        if form.is_valid():
+            saved_form = form.save()
+            print(saved_form)
+            #redirect
+        else:
+            print('nope')
     else:
         form = OrdemServico()
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar'})
