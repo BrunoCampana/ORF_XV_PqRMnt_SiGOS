@@ -98,12 +98,6 @@ def visualizarOS(request, os_id):
     
     return redirect('/ordemservico/caixa')
 '''
-def getFuncaoMilitar(user):
-        user_id = user.id
-        return Funcao.objects.filter(militar=user_id).values()
-
-def getOSfromId(os_id):
-    return OrdemDeServico.objects.filter(id=os_id)
 
 def generateOSNr():
     return 0
