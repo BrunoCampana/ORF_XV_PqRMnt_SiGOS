@@ -142,7 +142,7 @@ def visualizarOS(request, os_id):
         classe = funcao.values('classe')
         nome_funcao= funcao.values('nome_funcao')
 
-        permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
+        permissions = {[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))}
         
         classe = {x['classe'] for x in list(classe)}
         nome_funcao = {x['nome_funcao'] for x in list(nome_funcao)}
@@ -182,54 +182,56 @@ def visualizarOS(request, os_id):
                 else:
                     print("CMT PEL / CH CL")
                     ret_os_classe = list(os.values('classe'))[0]['classe']
-                    if (ret_os_classe in classe):
-                        # cmt pel
-                        if (3 in nome_funcao):
-                            print("CMT PEL")
-                            if(ret_os_status == 2): #AGUARDANDO INSPEÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="2" type="submit">Enviar</button>'
 
-                            elif(ret_os_status == 3): #REALIZANDO INSPEÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="3" type="submit">Enviar</button>'
+                    # cmt pel
+                    if ([3, ret_os_classe] in permissão):
+                        print("CMT PEL")
+                        if(ret_os_status == 2): #AGUARDANDO INSPEÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="2" type="submit">Enviar</button>'
 
-                            elif(ret_os_status == 4): #AGUARDANDO MANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="4" type="submit">Enviar</button>'
+                        elif(ret_os_status == 3): #REALIZANDO INSPEÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="3" type="submit">Enviar</button>'
 
-                            elif(ret_os_status == 5): #EM MANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="5" type="submit">Enviar</button>'
+                        elif(ret_os_status == 4): #AGUARDANDO MANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="4" type="submit">Enviar</button>'
 
-                            elif(ret_os_status == 6): #AGUARDANDO TESTES
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="6" type="submit">Enviar</button>'
+                        elif(ret_os_status == 5): #EM MANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="5" type="submit">Enviar</button>'
 
-                            elif(ret_os_status == 7): #TESTES EM EXECUÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="7" type="submit">Enviar</button>'
+                        elif(ret_os_status == 6): #AGUARDANDO TESTES
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="6" type="submit">Enviar</button>'
 
-                            elif(ret_os_status == 8): #REMANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="8" type="submit">Enviar</button>'
+                        elif(ret_os_status == 7): #TESTES EM EXECUÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="7" type="submit">Enviar</button>'
 
-                            else:
-                                #CRIAR FORM VAZIO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '' #HTMLSUBMIT
+                        elif(ret_os_status == 8): #REMANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="8" type="submit">Enviar</button>'
 
-                        # ch classe
-                        else: 
-                            print("CH CL")
-                            if(ret_os_status == 9): #REMANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="9" type="submit">Enviar</button>'
+                        else:
+                            #CRIAR FORM VAZIO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
 
-                            else:
-                                #CRIAR FORM VAZIO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '' #HTMLSUBMIT
+                        return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
+
+                    # ch classe
+                    elif ([4, ret_os_classe] in permissão):
+                        print("CH CL")
+                        if(ret_os_status == 9): #REMANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '<button name="status" value="9" type="submit">Enviar</button>'
+
+                        else:
+                            #CRIAR FORM VAZIO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
 
                         return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
 
@@ -241,13 +243,13 @@ def consultarOS(request):
         form = ConsultaOrdemServico(request.POST)
         form.is_valid()
         #result = Sistema.objects.filter(**form.cleaned_data).values()
-        result = OrdemDeServico.objects.filter(**form.cleaned_data).values()
+        data = OrdemDeServico.objects.filter(**form.cleaned_data).values()
     
     else:
         form = ConsultaOrdemServico()
-        result = {}
+        data = {}
     
-    return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': result})
+    return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def todo(request):
     return render(request, 'ordemDeServico/todo.html')
