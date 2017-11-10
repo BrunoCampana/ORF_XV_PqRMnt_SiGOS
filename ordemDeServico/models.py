@@ -93,7 +93,7 @@ class OrdemDeServico(models.Model):
     serv_realizado = models.TextField(blank=True)
     custo_total = models.IntegerField()
     classe = models.IntegerField(choices=CLASSE_CHOICES)
-    om_requerente = models.CharField(max_length=255, blank=True)
+    om_requerente = models.ForeignKey(OM)
     ordem_recolhimento = models.CharField(max_length=30, blank=True)
     guia_recolhimento = models.CharField(max_length=30, blank=True)
     num_diex = models.CharField(max_length=30, blank=True)
@@ -113,3 +113,10 @@ class OrdemDeServico(models.Model):
     ch_cp = models.ForeignKey('login.InformacaoMilitar', related_name='Ch_CP')
     ch_classe = models.ForeignKey('login.InformacaoMilitar', related_name='Ch_Classe')
     cmt_pel = models.ForeignKey('login.InformacaoMilitar', related_name='Cmt_Pel')
+
+
+class OM(models.Model):
+    nome = models.CharField(max_length=10)
+
+    def __str__(self):
+        return u'%s' % (self.nome)

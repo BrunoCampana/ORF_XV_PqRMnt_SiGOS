@@ -17,3 +17,4 @@ class SubsistemasAdmin(admin.ModelAdmin):
 
 admin.site.register(Sistema)
 admin.site.register(Subsistemas)
+admin.site.register(OM)
