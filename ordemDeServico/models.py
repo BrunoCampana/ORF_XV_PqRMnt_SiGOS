@@ -87,7 +87,7 @@ class OrdemDeServico(models.Model):
     # atributos
     tipo = models.IntegerField(choices=TIPO_CHOICES)
     status = models.IntegerField(default=1)
-    nd = models.IntegerField(choices=ND_CHOICES)
+    nd = models.IntegerField(choices=ND_CHOICES, default=0)
 
     pit = models.BooleanField()
 
