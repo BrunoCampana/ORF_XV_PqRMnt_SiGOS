@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^ordemservico/consultar', views.consultarOS, name="consulta"),
     url(r'^$', views.caixadeentrada, name="caixa"),
     url(r'^ordemservico/visualizar/(?P<os_id>\d+)/$', views.visualizarOS, name="vizOS"),
+    url(r'^ordemservico/todo', views.todo, name="todo"),
 ]
