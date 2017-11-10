@@ -1,13 +1,8 @@
 from django.forms import Form, ModelForm, CheckboxSelectMultiple, ChoiceField
-from .models import OrdemDeServico, Sistema, Subsistemas
+from .models import OrdemDeServico, Sistema, Subsistemas, TIPO_CHOICES
 
 class Tipo(Form):
-    TIPO = (
-    (0, 'Apoio ao Conjunto'),
-    (1, 'Apoio Direto'),
-    (2, 'Apoio em Suprimento'),
-    )
-    tipo = ChoiceField(label='Tipo',choices=TIPO)
+    tipo = ChoiceField(label='Tipo',choices=TIPO_CHOICES)
 
 class OrdemServico(ModelForm):
     class Meta:
