@@ -26,14 +26,14 @@ def criarordemservico(request, tipo):
     print(classe)
 
     if request.method == 'POST':
-        form = OrdemServico(classe=classe , request.POST)
+        form = OrdemServico(request.POST, classe=classe)
         if form.is_valid():
             instance = form.save(commit=False)
             
             #TODO preencher
             instance.nr_os = generateOSNr()
             instance.tipo = tipo
-            instance.status = 4
+            instance.status = 1
             instance.nd = 0
             instance.classe = 5
             instance.ch_cp_id = 1
@@ -64,7 +64,9 @@ def caixadeentrada(request):
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
         #CHCP tem acesso a todas classes
         data = alldata.filter(Q(status=1) | Q(status=10)).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
-        return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
+      
+     #   data = alldata.values()
+        return render(request, 'ordemDeServico/caixa.html', {'data': data})
 
     return redirect('/login')
 
