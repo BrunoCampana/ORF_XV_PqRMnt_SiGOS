@@ -19,7 +19,7 @@ def getIDChCP():
 def getOSfromId(os_id):
     print("GET OS ID")
     #return OrdemDeServico.objects.filter(id=os_id)
-    return Sistema.objects.filter(id=os_id)
+    return OrdemDeServico.objects.filter(id=os_id)
 
 def generateOSNr(tipo, classe):
     return 0
