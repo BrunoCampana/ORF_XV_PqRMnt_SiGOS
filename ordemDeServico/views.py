@@ -198,7 +198,7 @@ def visualizarOS(request, os_id):
                         form_consulta = '' #FORMAGCIENTE
                         submit = '' #HTMLSUBMIT
 
-                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_colsulta, 'submit': submit})
+                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                 # cmt pel ou ch classe
                 else:
                     print("CMT PEL / CH CL")
