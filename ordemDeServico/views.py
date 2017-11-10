@@ -113,15 +113,17 @@ def visualizarOS(request, os_id):
         # sem função
         if nome_funcao and (0 not in nome_funcao or len(nome_funcao)!=1):
             print_value = list(os.values())[0]
+            os_keys = print_value.keys()
+            os_values = print_value.values()
             # ch cp ou adj cp
             if (1 in nome_funcao or 2 in nome_funcao):
                 # fazer parte de edição da os (cientes, fechamento, etc)
-                return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value})
+                return render(request, 'ordemDeServico/visualizar.html', {'ordemServico': print_value, 'os_keys': os_keys, 'os_values': os_values})
             else:
                 ret_os_id = list(os.values('classe'))[0]['classe']
                 if (ret_os_id in classe):
                     # fazer parte de edição da os (cientes, fechamento, etc)
-                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value})
+                    return render(request, 'ordemDeServico/visualizar.html', {'ordemServico': print_value, 'os_keys': os_keys, 'os_values': os_values})
 
     return redirect("/ordemservico/caixa")
 
