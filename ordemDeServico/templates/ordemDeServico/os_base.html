@@ -1,0 +1,58 @@
+{% extends "ordemDeServico/base.html" %}
+
+{% block title %} Consulta {% endblock %}
+{% block content %}
+    <div class="box">
+        <div class="box-header">
+            {% block options %}
+            {% endblock %}
+        </div>
+
+        <div class="box-body no-padding">
+            {% block list%}
+            {% endblock %}
+        </div>
+    </div>
+   <!-- 
+    <div class="dcol-md-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Caixa de Entrada</h3>
+
+              <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+                  <li><a href="#">«</a></li>
+                  <li><a href="#">1</a></li>
+                  <li><a href="#">2</a></li>
+                  <li><a href="#">3</a></li>
+                  <li><a href="#">»</a></li>
+                </ul>
+              </div>
+            </div> -->
+            <!-- /.box-header -->
+            <!-- <div class="box-body no-padding">
+              <table class="table">
+                <tbody>
+                 <tr>
+                    <th> ID </th>
+                    <th> DESCRICAO </th>
+                    <th> CLASSE </th>
+                    <th> VISUALIZAR </th>
+                 </tr>
+
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.descricao }}</td>
+                        <td>{{ item.classe }}</td>
+                        <td><a href="/ordemservico/visualizar/{{ item.id }}">Ver OS</a> </td>
+                    </tr>
+                     {% endfor %}
+              </tbody></table>
+            </div> -->
+            <!-- /.box-body
+          </div>
+           /.box 
+
+    </div> -->
+{% endblock %}

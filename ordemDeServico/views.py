@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .forms import OrdemServico, Tipo
+from .forms import OrdemServico, ConsultaOrdemServico, Tipo
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 
 
 # Create your views here.
 def escolhertipoOS(request):
+    funcao = getFuncaoMilitar(request.user)
+    nome_funcao= funcao.values('nome_funcao')
+    nome_funcao = {x['nome_funcao'] for x in list(nome_funcao)}
+    if 4 not in nome_funcao:
+        return render(request, "ordemDeServico/semPermissao.html")
+
     if request.method == 'POST':
         form = Tipo(request.POST)
         if form.is_valid():
@@ -33,7 +39,7 @@ def criarordemservico(request, tipo):
             #TODO preencher
             instance.nr_os = generateOSNr()
             instance.tipo = tipo
-            instance.status = 4
+            instance.status = 1
             instance.nd = 0
             instance.classe = 5
             instance.ch_cp_id = 1
@@ -64,14 +70,12 @@ def caixadeentrada(request):
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
         #CHCP tem acesso a todas classes
         data = alldata.filter(Q(status=1) | Q(status=10)).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
-        return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
+      
+     #   data = alldata.values()
+        return render(request, 'ordemDeServico/caixa.html', {'data': data})
 
     return redirect('/login')
 
-# def visualizarOS(request, os_id):
-#     print(os_id)
-#     return redirect("/login")
-#
 
 def getFuncaoMilitar(user):
     user_id = user.id
@@ -79,36 +83,60 @@ def getFuncaoMilitar(user):
 
 
 def getOSfromId(os_id):
-    return OrdemDeServico.objects.filter(id=os_id)
+    print("GET OS ID")
+    #return OrdemDeServico.objects.filter(id=os_id)
+    return Sistema.objects.filter(id=os_id)
 
+
+#def visualizarOS(request, os_id):
+#    print(os_id)
+#    funcao = getFuncaoMilitar(request.user)
+#    print(funcao)
+#    return redirect("/login")
 
 def visualizarOS(request, os_id):
-    print(os_id)
     funcao = getFuncaoMilitar(request.user)
     print(funcao)
-    return redirect("/login")
-'''
-def visualizarOS(request, os_id):
-    if request.method == 'POST':
-        funcao = getFuncaoMilitar(request.user)
-        classe = funcao["classe"]
-        nome_func = funcao["nome_func"]
-        os_id = request.POST.get('id')
-        os = getOSfromId(os_id)
-        if os:
-            # sem função
-            if nome_func != 0:
-                # ch cp ou adj cp
-                if (nome_func == 1 or nome_func == 2):
-                    # fazer parte de edição da os (cientes, fechamento, etc)
-                    return render(pagina)
-                else:
-                    if (classe == os["classe"]):
-                        # fazer parte de edição da os (cientes, fechamento, etc)
-                        return render(pagina)
+    classe = funcao.values('classe')
+    nome_funcao= funcao.values('nome_funcao')
+
+    permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
     
-    return redirect('/ordemservico/caixa')
-'''
+    classe = {x['classe'] for x in list(classe)}
+    nome_funcao = {x['nome_funcao'] for x in list(nome_funcao)}
+
+    print(permissions)
+    print(classe)
+    print(nome_funcao)
+    os = getOSfromId(os_id)
+    if os:
+        # sem função
+        if nome_funcao and (0 not in nome_funcao or len(nome_funcao)!=1):
+            print_value = list(os.values())[0]
+            # ch cp ou adj cp
+            if (1 in nome_funcao or 2 in nome_funcao):
+                # fazer parte de edição da os (cientes, fechamento, etc)
+                return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value})
+            else:
+                ret_os_id = list(os.values('classe'))[0]['classe']
+                if (ret_os_id in classe):
+                    # fazer parte de edição da os (cientes, fechamento, etc)
+                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value})
+
+    return redirect("/ordemservico/caixa")
+
 
 def generateOSNr():
     return 0
+
+def consultarOS(request):
+    if request.method == 'POST':
+        form = ConsultaOrdemServico(request.POST)
+        form.is_valid()
+        result = Sistema.objects.filter(**form.cleaned_data).values()
+    
+    else:
+        form = ConsultaOrdemServico()
+        result = {}
+    
+    return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': result})
