@@ -80,8 +80,8 @@ class OrdemDeServico(models.Model):
 
     # atributos
     tipo = models.IntegerField(choices=TIPO_CHOICES)
-    status = models.IntegerField()
-    nd = models.IntegerField()
+    status = models.IntegerField(default=1)
+    nd = models.IntegerField(default=0)
 
     pit = models.BooleanField()
 
@@ -94,9 +94,9 @@ class OrdemDeServico(models.Model):
     motivo = models.CharField(max_length=255)
     desc_material = models.TextField(blank=True)
     prioridade = models.IntegerField(blank=True, null=True)
-    quantidade = models.IntegerField()
+    quantidade = models.IntegerField(default=0)
     serv_realizado = models.TextField(blank=True)
-    custo_total = models.IntegerField()
+    custo_total = models.IntegerField(default=0)
     classe = models.IntegerField(choices=CLASSE_CHOICES)
     om_requerente = models.ForeignKey(OM)
     ordem_recolhimento = models.CharField(max_length=30, blank=True)

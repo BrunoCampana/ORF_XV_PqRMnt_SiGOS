@@ -28,7 +28,7 @@ def login(request):
     else:
         form = Login()
 
-    return render(request, 'login/form.html', {'form': form, 'submitValue': 'Entrar'})
+    return render(request, 'login/form.html', {'form': form})
 
 
 def logout(request):
