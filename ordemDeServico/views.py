@@ -133,12 +133,6 @@ def caixadeentrada(request):
 
     return redirect('/login')
 
-#def visualizarOS(request, os_id):
-#    print(os_id)
-#    funcao = getFuncaoMilitar(request.user)
-#    print(funcao)
-#    return redirect("/login")
-
 def visualizarOS(request, os_id):
     funcao = getFuncaoMilitar(request.user)
     print(funcao)
@@ -155,18 +149,89 @@ def visualizarOS(request, os_id):
     print(nome_funcao)
     os = getOSfromId(os_id)
     if os:
+
         # sem função
         if nome_funcao and (0 not in nome_funcao or len(nome_funcao)!=1):
             print_value = list(os.values())[0]
+            ret_os_status = list(os.values('status'))[0]['status']
+
             # ch cp ou adj cp
             if (1 in nome_funcao or 2 in nome_funcao):
-                # fazer parte de edição da os (cientes, fechamento, etc)
-                return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value})
+                # ch cp
+                if (1 in nome_funcao):
+                    if(ret_os_status == 1): #AGUARDANDO CIENTE
+                        form_consulta = '' # FORMAGCIENTE
+                        submit = '' #HTMLSUBMIT
+
+                    elif(ret_os_status == 10): #AGUARDANDO CIENTE - FECHAR
+                        form_consulta = '' #FORMAGCIENTE
+                        submit = '' #HTMLSUBMIT
+
+                    else:
+                        #CRIAR FORM VAZIO
+                        form_consulta = '' #FORMAGCIENTE
+                        submit = '' #HTMLSUBMIT
+
+                # adj cp
+                           
+                else:
+                    #CRIAR FORM VAZIO
+                    form_consulta = '' #FORMAGCIENTE
+                    submit = '' #HTMLSUBMIT
+
+                return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_colsulta, 'submit': submit})
+            # cmt pel ou ch classe
             else:
-                ret_os_id = list(os.values('classe'))[0]['classe']
-                if (ret_os_id in classe):
-                    # fazer parte de edição da os (cientes, fechamento, etc)
-                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value})
+                ret_os_classe = list(os.values('classe'))[0]['classe']
+                if (ret_os_classe in classe):
+                    # cmt pel
+                    if (3 in nome_funcao):
+                        if(ret_os_status == 2): #AGUARDANDO INSPEÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        elif(ret_os_status == 3): #REALIZANDO INSPEÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        elif(ret_os_status == 4): #AGUARDANDO MANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        elif(ret_os_status == 5): #EM MANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        elif(ret_os_status == 6): #AGUARDANDO TESTES
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        elif(ret_os_status == 7): #TESTES EM EXECUÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        elif(ret_os_status == 8): #REMANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        else:
+                            #CRIAR FORM VAZIO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                    # ch classe
+                    else: 
+                        if(ret_os_status == 9): #REMANUTENÇÃO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                        else:
+                            #CRIAR FORM VAZIO
+                            form_consulta = '' #FORMAGCIENTE
+                            submit = '' #HTMLSUBMIT
+
+                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
+
 
     return redirect("/ordemservico/caixa")
 
@@ -174,7 +239,8 @@ def consultarOS(request):
     if request.method == 'POST':
         form = ConsultaOrdemServico(request.POST)
         form.is_valid()
-        result = Sistema.objects.filter(**form.cleaned_data).values()
+        #result = Sistema.objects.filter(**form.cleaned_data).values()
+        result = OrdemDeServico.objects.filter(**form.cleaned_data).values()
     
     else:
         form = ConsultaOrdemServico()
