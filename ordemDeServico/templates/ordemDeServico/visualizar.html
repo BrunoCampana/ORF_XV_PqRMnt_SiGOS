@@ -1,0 +1,13 @@
+{% extends "ordemDeServico/os_base.html" %}
+
+{% block options %}
+    {{ ordemDeServico }}
+{% endblock%}
+
+{% block list %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form_consulta }}
+        {{ submit|safe}}
+    </form>
+{% endblock %}
