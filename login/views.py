@@ -18,7 +18,10 @@ def login(request):
             if user is not None:
                 auth_login(request, user)
                 print(request)
-                return redirect('/ordemservico/caixa')
+                if not request.user.is_superuser:
+                    return redirect('/ordemservico/caixa')
+                else:
+                    return redirect('/admin')
 
             else:
                 form.add_error(None, 'Usuário ou senha incorretos.')
