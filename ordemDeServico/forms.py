@@ -45,25 +45,16 @@ class OrdemServicoSuprimento(ModelForm):
         'motivo',
         'desc_material',
         'quantidade',
-        'serv_realizado',
         'suprimento_aplicado',
         'custo_total',
         'om_requerente',
-        'quant_homens',
-        'sistema',
-        'subsistemas_manutenidos']
-
-        widgets = {
-            'subsistemas_manutenidos': CheckboxSelectMultiple(),
-        }
-
+        'sistema']
 
     def __init__(self,*args,**kwargs):
         classe = kwargs.pop('classe')
         super(OrdemServicoSuprimento,self).__init__(*args,**kwargs)
         if classe != 0:
             self.fields['sistema'].queryset = Sistema.objects.filter(classe=classe)
-            self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)
     
 class OrdemServicoConjunto(ModelForm):
     class Meta:

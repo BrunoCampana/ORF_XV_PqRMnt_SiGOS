@@ -3,16 +3,18 @@ from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
+from datetime import datetime
 
 
 def getFuncaoMilitar(user):
     user_id = user.id
     return Funcao.objects.filter(militar=user_id).values()
 
+def getIDCmtPel(classe):
+    return Funcao.objects.filter(classe=classe, nome_funcao=3).values()[0]['militar_id']
 
-def getIDMilitar(classe):
-    print(Funcao.objects.filter(classe=classe).values())
-    return Funcao.objects.filter(classe=classe).values()
+def getIDChCP():
+    return Funcao.objects.filter(nome_funcao=1).values()[0]['militar_id']
 
 def getOSfromId(os_id):
     print("GET OS ID")
@@ -59,15 +61,15 @@ def criarordemservico(request, tipo):
                 instance = form.save(commit=False)
                 
                 #TODO preencher
+                instance.abertura_os_date = datetime.now()
                 instance.nr_os = generateOSNr(tipo, classe)
                 instance.tipo = tipo
-                instance.status = 1
-                instance.nd = 0
+                instance.status = 10
                 instance.classe = classe
                 
-                instance.ch_cp_id = 1
-                instance.ch_classe_id = 1
-                instance.cmt_pel_id = 1
+                instance.ch_classe_id = request.user.id
+                instance.ch_cp_id = getIDChCP()
+                instance.cmt_pel_id = getIDCmtPel(classe)
                 
                 saved_form = instance.save()
                 form.save_m2m()
@@ -82,16 +84,15 @@ def criarordemservico(request, tipo):
                 instance = form.save(commit=False)
                 
                 #TODO preencher
+                instance.abertura_os_date = datetime.now()
                 instance.nr_os = generateOSNr(tipo, classe)
                 instance.tipo = tipo
-                instance.status = 1
-                instance.nd = 0
+                instance.status = 10
                 instance.classe = classe
-                instance.tempo = 0
                 
                 instance.ch_classe_id = request.user.id
-                instance.ch_cp_id = 1                
-                instance.cmt_pel_id = 1
+                instance.ch_cp_id = getIDChCP()
+                instance.cmt_pel_id = getIDCmtPel(classe)
                 
                 saved_form = instance.save()
                 form.save_m2m()
@@ -105,7 +106,6 @@ def criarordemservico(request, tipo):
         if int(tipo) == 0:
             form = OrdemServicoConjunto(classe=classe)
         elif int(tipo) == 1:
-            getIDMilitar(classe)
             form = OrdemServicoDireto(classe=classe)
         elif int(tipo) == 2:
             form = OrdemServicoSuprimento(classe=classe)
