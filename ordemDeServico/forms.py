@@ -79,3 +79,12 @@ class OrdemServico(ModelForm):
                     'ch_cp',
                     'ch_classe',
                     'cmt_pel']'''
+
+class ConsultaOrdemServico(ModelForm):
+    class Meta:
+        model = OrdemDeServico
+
+        #Direto
+        fields = ['id',
+                    'classe']
+ 

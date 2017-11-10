@@ -1,0 +1,35 @@
+{% extends "ordemDeServico/os_base.html" %}
+
+{% block options %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form_consulta }}
+        <input type="submit" value="Consultar">
+    </form>
+{% endblock%}
+
+{% block list %}
+
+            <div class="box-body no-padding">
+              <table class="table">
+                <tbody>
+                 <tr>
+                    <th> ID </th>
+                    <th> DESCRICAO </th>
+                    <th> CLASSE </th>
+                    <th> VISUALIZAR </th>
+                 </tr>
+
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.descricao }}</td>
+                        <td>{{ item.classe }}</td>
+                        <td><a href="/ordemservico/visualizar/{{ item.id }}">Ver OS</a> </td>
+                    </tr>
+                     {% endfor %}
+              </tbody></table>
+            </div>
+            <!-- /.box-body -->
+
+{% endblock %}
