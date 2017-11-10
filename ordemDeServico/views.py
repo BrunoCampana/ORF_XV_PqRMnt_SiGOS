@@ -29,14 +29,17 @@ def criarordemservico(request, tipo):
         form = OrdemServico(classe=classe , request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
+            
+            #TODO preencher
             instance.nr_os = generateOSNr()
             instance.tipo = tipo
-            instance.status = 9
+            instance.status = 4
             instance.nd = 0
             instance.classe = 5
             instance.ch_cp_id = 1
             instance.ch_classe_id = 1
             instance.cmt_pel_id = 1
+            
             saved_form = instance.save()
             form.save_m2m()
             print(saved_form)
