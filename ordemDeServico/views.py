@@ -173,7 +173,7 @@ def visualizarOS(request, os_id):
                         submit = '' #HTMLSUBMIT
 
                 # adj cp
-                           
+
                 else:
                     #CRIAR FORM VAZIO
                     form_consulta = '' #FORMAGCIENTE
@@ -220,7 +220,7 @@ def visualizarOS(request, os_id):
                             submit = '' #HTMLSUBMIT
 
                     # ch classe
-                    else: 
+                    else:
                         if(ret_os_status == 9): #REMANUTENÇÃO
                             form_consulta = '' #FORMAGCIENTE
                             submit = '' #HTMLSUBMIT
