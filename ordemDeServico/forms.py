@@ -32,13 +32,21 @@ class OrdemServico(ModelForm):
             'subsistemas_manutenidos': CheckboxSelectMultiple(),
         }
 
-    def __init__(self, classe=None, **kwargs):
-        super(OrdemServico, self).__init__(**kwargs)
+
+    def __init__(self,*args,**kwargs):
+        classe = kwargs.pop('classe')
+        super(OrdemServico,self).__init__(*args,**kwargs)
         if classe != 0:
             self.fields['sistema'].queryset = Sistema.objects.filter(classe=classe)
             self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)
 
-        '''fields = [   'aguardando_ciente_date',
+    '''def __init__(self, classe=None, **kwargs):
+        super(OrdemServico, self).__init__(classe,**kwargs)
+        if classe != 0:
+            self.fields['sistema'].queryset = Sistema.objects.filter(classe=classe)
+            self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)'''
+    
+    '''fields = [   'aguardando_ciente_date',
                     'aguardando_inspecao_date',
                     'realizando_inspecao_date',
                     'aguardando_manutencao_date',
