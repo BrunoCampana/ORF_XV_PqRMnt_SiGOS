@@ -123,16 +123,16 @@ def caixadeentrada(request):
         nome_func = int(funcao[0]["nome_funcao"])
         if nome_func == 1:
 	    #CHCP tem acesso a todas classes
-            data = alldata.filter(Q(status=1) | Q(status=10)).orderby('-status','-abertura_os_date').values()
+            data = alldata.filter(Q(status=1) | Q(status=10)).order_by('status','-abertura_os_date').values()
             print(data)
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
         if nome_func == 3:
 	    #CMTPel, acesso apenas a sua classe
-            data = alldata.filter(classe=classe, status__gte=2, status__lte=8).orderby('-status', '-abertura_os_date').values()
+            data = alldata.filter(classe=classe, status__gte=2, status__lte=8).order_by('status', '-abertura_os_date').values()
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
         if nome_func == 4:
             #CHClasse
-            data = alldata.filter(classe=classe, status=10).orderby('-status', '-abertura_os_date').values()
+            data = alldata.filter(classe=classe, status=10).order_by('status', '-abertura_os_date').values()
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
 
