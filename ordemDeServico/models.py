@@ -54,6 +54,11 @@ class Subsistemas(models.Model):
     def __str__(self):
         return u'%s' % (self.descricao)
 
+class OM(models.Model):
+    nome = models.CharField(max_length=10)
+
+    def __str__(self):
+        return u'%s' % (self.nome)
 
 class OrdemDeServico(models.Model):
     nr_os = models.IntegerField()
@@ -115,8 +120,3 @@ class OrdemDeServico(models.Model):
     cmt_pel = models.ForeignKey('login.InformacaoMilitar', related_name='Cmt_Pel')
 
 
-class OM(models.Model):
-    nome = models.CharField(max_length=10)
-
-    def __str__(self):
-        return u'%s' % (self.nome)

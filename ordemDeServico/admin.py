@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Sistema, Subsistemas
+from .models import Sistema, Subsistemas, OM
 
 
 # Register your models here.
