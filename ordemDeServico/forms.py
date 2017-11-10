@@ -32,7 +32,7 @@ class OrdemServico(ModelForm):
             'subsistemas_manutenidos': CheckboxSelectMultiple(),
         }
 
-    def __init__(self, classe=None, **kwargs):
+    def __init__(self, classe=None,**kwargs):
         super(OrdemServico, self).__init__(**kwargs)
         if classe != 0:
             self.fields['sistema'].queryset = Sistema.objects.filter(classe=classe)

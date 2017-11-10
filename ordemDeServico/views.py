@@ -26,7 +26,7 @@ def criarordemservico(request, tipo):
     print(classe)
 
     if request.method == 'POST':
-        form = OrdemServico(request.POST, classe=classe)
+        form = OrdemServico(classe=classe , request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
             instance.nr_os = generateOSNr()
