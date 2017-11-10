@@ -54,7 +54,28 @@ def criarordemservico(request, tipo):
     if request.method == 'POST':
 
         if int(tipo) == 0: #Apoio em Conjunto
-            pass
+            form = OrdemServicoConjunto(request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                
+                #TODO preencher
+                instance.abertura_os_date = datetime.now()
+                instance.nr_os = generateOSNr(tipo, classe)
+                instance.tipo = tipo
+                instance.status = 1
+                instance.classe = classe
+                
+                instance.ch_classe_id = request.user.id
+                instance.ch_cp_id = getIDChCP()
+                instance.cmt_pel_id = getIDCmtPel(classe)
+                
+                saved_form = instance.save()
+                form.save_m2m()
+                #TODO redirect pra página de adicionado corretamente
+            else:
+                #TODO redirect pra página de falha em adicionar
+                pass
+
         elif int(tipo) == 1: #Apoio Direto
             form = OrdemServicoDireto(request.POST, classe=classe)
             if form.is_valid():
@@ -104,7 +125,7 @@ def criarordemservico(request, tipo):
             form = None
     else:
         if int(tipo) == 0:
-            form = OrdemServicoConjunto(classe=classe)
+            form = OrdemServicoConjunto()
         elif int(tipo) == 1:
             form = OrdemServicoDireto(classe=classe)
         elif int(tipo) == 2:
@@ -177,7 +198,7 @@ def visualizarOS(request, os_id):
                         form_consulta = '' #FORMAGCIENTE
                         submit = '' #HTMLSUBMIT
 
-                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_colsulta, 'submit': submit})
+                    return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                 # cmt pel ou ch classe
                 else:
                     print("CMT PEL / CH CL")
