@@ -50,16 +50,17 @@ def criarordemservico(request, tipo):
 
 
 def caixadeentrada(request):
-    alldata = Sistema.objects.all()
+    alldata = OrdemDeServico.objects.all()
     funcao = getFuncaoMilitar(request.user)
     if funcao:
         classe = int(funcao[0]["classe"])
         print(classe)
         if classe != 0:
-		#cada militar ter acesso apenas a sua classe
-            data = alldata.filter(classe=classe).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
-            return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
-        data = alldata.filter(Q()).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
+	    #cada militar ter acesso apenas a sua classe
+            data = alldata.filter(classe=classe, status__gte=2, status__lte=8).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
+            return render(request, 'ordemDeServico/caixa.html', {'data': data})
+        #CHCP tem acesso a todas classes
+        data = alldata.filter(Q(status=1) | Q(status=10)).values()  # foi feito apenas para fins de teste. mudar para OrdemDeServico
         return render(request, 'ordemDeServico/caixa_test.html', {'data': data})
 
     return redirect('/login')
