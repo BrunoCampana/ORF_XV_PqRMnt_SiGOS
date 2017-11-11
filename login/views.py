@@ -3,6 +3,7 @@ from .forms import Login
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from src.utils import getFuncaoMilitar
 
 
 # Create your views here.
@@ -16,12 +17,20 @@ def login(request):
                                 password=form.cleaned_data['password'])
 
             if user is not None:
-                auth_login(request, user)
-                print(request)
-                if not request.user.is_superuser:
+                if user.is_superuser:
+                    auth_login(request, user)
+                    return redirect('/admin')
+
+                funcao = getFuncaoMilitar(user)
+                
+                if funcao:
+                    auth_login(request, user)
+                    print(request)
                     return redirect('/ordemservico/caixa')
                 else:
-                    return redirect('/admin')
+                    #TODO CRIAR NOVA PAGINA PARA SER DIRECIONADO
+                    form.add_error(None, 'Usuário sem função. Acesso negado')
+                    return render(request, 'login/form.html', {'form': form})
 
             else:
                 form.add_error(None, 'Usuário ou senha incorretos.')
