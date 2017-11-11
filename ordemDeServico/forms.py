@@ -13,8 +13,6 @@ class Tipo(Form):
                 new_list.append(CLASSE_CHOICES[entry['classe']])
             self.fields['classe'] = ChoiceField(label='Classe', choices=new_list)
 
-
-
 class OrdemServicoDireto(ModelForm):
     class Meta:
         model = OrdemDeServico
