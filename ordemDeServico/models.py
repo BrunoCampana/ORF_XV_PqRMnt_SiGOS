@@ -37,6 +37,12 @@ STATUS_CHOICES = (
     (11, 'Fechada - ciente dado'),
 )
 
+ND_CHOICES = (
+    (0, 'Não se aplica'),
+    (30, 'ND30'),
+    (39, 'ND39'),
+)
+
 
 # Create your models here.
 class Sistema(models.Model):
@@ -81,7 +87,7 @@ class OrdemDeServico(models.Model):
     # atributos
     tipo = models.IntegerField(choices=TIPO_CHOICES)
     status = models.IntegerField(default=1)
-    nd = models.IntegerField(default=0)
+    nd = models.IntegerField(choices=ND_CHOICES, default=0)
 
     pit = models.BooleanField()
 
@@ -96,7 +102,7 @@ class OrdemDeServico(models.Model):
     prioridade = models.IntegerField(blank=True, null=True)
     quantidade = models.IntegerField(default=0)
     serv_realizado = models.TextField(blank=True)
-    custo_total = models.IntegerField(default=0)
+    custo_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     classe = models.IntegerField(choices=CLASSE_CHOICES)
     om_requerente = models.ForeignKey(OM)
     ordem_recolhimento = models.CharField(max_length=30, blank=True)
@@ -113,7 +119,7 @@ class OrdemDeServico(models.Model):
     prestador_servico = models.CharField(max_length=255, blank=True)
 
     # Chaves estrangeiras
-    sistema = models.ForeignKey(Sistema)
+    sistema = models.ForeignKey(Sistema, null=True)
     subsistemas_manutenidos = models.ManyToManyField(Subsistemas)
     ch_cp = models.ForeignKey('login.InformacaoMilitar', related_name='Ch_CP')
     ch_classe = models.ForeignKey('login.InformacaoMilitar', related_name='Ch_Classe')
