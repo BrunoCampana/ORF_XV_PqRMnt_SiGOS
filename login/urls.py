@@ -19,5 +19,6 @@ from . import views
 
 urlpatterns = [
     url(r'^login/$', views.login, name='login'),
+    url(r'^mudarsenha/$', views.mudarsenha, name='mudarsenha'),
     url(r'^logout/$', views.logout, name='logout'),
 ]
