@@ -1,8 +1,19 @@
 from django.forms import Form, ModelForm, CheckboxSelectMultiple, ChoiceField
-from .models import OrdemDeServico, Sistema, Subsistemas, TIPO_CHOICES
+from .models import OrdemDeServico, Sistema, Subsistemas, TIPO_CHOICES, CLASSE_CHOICES
 
 class Tipo(Form):
-    tipo = ChoiceField(label='Tipo',choices=TIPO_CHOICES)
+    tipo = ChoiceField(label='Tipo', choices=TIPO_CHOICES)
+
+    def __init__(self,*args,**kwargs):
+        classe = kwargs.pop('classe')
+        super(Tipo,self).__init__(*args,**kwargs)
+        new_list = []
+        if classe:
+            for entry in classe:
+                new_list.append(CLASSE_CHOICES[entry['classe']])
+            self.fields['classe'] = ChoiceField(label='Classe', choices=new_list)
+
+
 
 class OrdemServicoDireto(ModelForm):
     class Meta:
@@ -22,6 +33,11 @@ class OrdemServicoDireto(ModelForm):
         'quant_homens',
         'sistema',
         'subsistemas_manutenidos']
+
+        labels = {
+            'tempo':'Tempo (em horas)',
+            'custo_total':'Custo Total (em R$)'
+        }
 
         widgets = {
             'subsistemas_manutenidos': CheckboxSelectMultiple(),
@@ -49,6 +65,11 @@ class OrdemServicoSuprimento(ModelForm):
         'custo_total',
         'om_requerente',
         'sistema']
+
+        labels = {
+            'tempo':'Tempo (em horas)',
+            'custo_total':'Custo Total (em R$)'
+        }
 
     def __init__(self,*args,**kwargs):
         classe = kwargs.pop('classe')

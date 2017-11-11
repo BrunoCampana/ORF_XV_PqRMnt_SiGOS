@@ -102,7 +102,7 @@ class OrdemDeServico(models.Model):
     prioridade = models.IntegerField(blank=True, null=True)
     quantidade = models.IntegerField(default=0)
     serv_realizado = models.TextField(blank=True)
-    custo_total = models.IntegerField(default=0)
+    custo_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     classe = models.IntegerField(choices=CLASSE_CHOICES)
     om_requerente = models.ForeignKey(OM)
     ordem_recolhimento = models.CharField(max_length=30, blank=True)

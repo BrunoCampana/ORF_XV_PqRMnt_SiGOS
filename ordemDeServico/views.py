@@ -3,8 +3,7 @@ from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
-from datetime import datetime
-
+from datetime import datetime, timedelta
 
 def getFuncaoMilitar(user):
     user_id = user.id
@@ -28,29 +27,26 @@ def generateOSNr(tipo, classe):
 # Create your views here.
 def escolhertipoOS(request):
     funcao = getFuncaoMilitar(request.user)
+    classes = funcao.values('classe')
     nome_funcao= funcao.values('nome_funcao')
     nome_funcao = {x['nome_funcao'] for x in list(nome_funcao)}
     if 4 not in nome_funcao:
         return render(request, "ordemDeServico/semPermissao.html")
 
     if request.method == 'POST':
-        form = Tipo(request.POST)
+        form = Tipo(request.POST, classe=classes)
         if form.is_valid():
             tipo = form.cleaned_data['tipo']
-            return redirect("/ordemservico/criar/" + tipo)
+            classe = form.cleaned_data['classe']
+            return redirect("/ordemservico/criar/" + tipo + '/' + classe)
         else:
             print(form.errors)
     else:
-        form = Tipo()
+        form = Tipo(classe=classes)
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Abrir'})
 
 
-def criarordemservico(request, tipo):
-    funcao = getFuncaoMilitar(request.user)
-    #classe = funcao.values('classe')
-    classe = funcao[0]['classe']
-    print(classe)
-
+def criarordemservico(request, tipo, classe):
     if request.method == 'POST':
 
         if int(tipo) == 0: #Apoio em Conjunto
@@ -59,7 +55,7 @@ def criarordemservico(request, tipo):
                 instance = form.save(commit=False)
                 
                 #TODO preencher
-                instance.abertura_os_date = datetime.now()
+                instance.abertura_os_date = datetime.now() - timedelta(hours=4)
                 instance.nr_os = generateOSNr(tipo, classe)
                 instance.tipo = tipo
                 instance.status = 1
@@ -82,7 +78,7 @@ def criarordemservico(request, tipo):
                 instance = form.save(commit=False)
                 
                 #TODO preencher
-                instance.abertura_os_date = datetime.now()
+                instance.abertura_os_date = datetime.now() - timedelta(hours=4)
                 instance.nr_os = generateOSNr(tipo, classe)
                 instance.tipo = tipo
                 instance.status = 10
@@ -105,7 +101,7 @@ def criarordemservico(request, tipo):
                 instance = form.save(commit=False)
                 
                 #TODO preencher
-                instance.abertura_os_date = datetime.now()
+                instance.abertura_os_date = datetime.now() - timedelta(hours=4)
                 instance.nr_os = generateOSNr(tipo, classe)
                 instance.tipo = tipo
                 instance.status = 10
