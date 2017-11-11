@@ -32,7 +32,7 @@ def meu_anonymous_required(func):
 		if not request.user.is_authenticated():
 			return func(request)
 		else:
-			return redirect('/home')
+			return redirect('/')
 	return func_wrapper
 
 def meu_mudar_senha(form, request):
