@@ -16,110 +16,120 @@ def escolhertipoOS(request):
         return render(request, "ordemDeServico/semPermissao.html")
 
     if request.method == 'POST':
-        form = Tipo(request.POST)
+        form = Tipo(request.user, request.POST)
         if form.is_valid():
             tipo = form.cleaned_data['tipo']
-            return redirect("/ordemservico/criar/" + tipo)
+            classe = form.cleaned_data['classe']
+            return redirect("/ordemservico/criar/" + tipo + "/" + classe)
         else:
             print(form.errors)
     else:
-        form = Tipo()
+        form = Tipo(request.user)
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Abrir'})
 
 
 #@login_required
-def criarordemservico(request, tipo):
+def criarordemservico(request, tipo, classe):
     funcao = getFuncaoMilitar(request.user)
     #classe = funcao.values('classe')
-    classe = funcao[0]['classe']
-    print(classe)
+    #classe = funcao[0]['classe']
+    #print(classe)
 
-    if request.method == 'POST':
+    classe = int(classe)
+    classe_militar = funcao.values('classe')
+    nome_funcao= funcao.values('nome_funcao')
 
-        if int(tipo) == 0: #Apoio em Conjunto
-            form = OrdemServicoConjunto(request.POST)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                
-                #TODO preencher
-                instance.abertura_os_date = datetime.now()
-                instance.nr_os = generateOSNr(tipo, classe)
-                instance.tipo = tipo
-                instance.status = 1
-                instance.classe = classe
-                
-                instance.ch_classe_id = request.user.id
-                instance.ch_cp_id = getIDChCP()
-                instance.cmt_pel_id = getIDCmtPel(classe)
-                
-                saved_form = instance.save()
-                form.save_m2m()
-                #TODO redirect pra página de adicionado corretamente
+    permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe_militar), list(nome_funcao)))]
+ 
+
+    if([classe, 4] in permissions):
+        if request.method == 'POST':
+            if int(tipo) == 0: #Apoio em Conjunto
+                form = OrdemServicoConjunto(request.POST)
+                if form.is_valid():
+                    instance = form.save(commit=False)
+                    
+                    #TODO preencher
+                    instance.abertura_os_date = datetime.now()
+                    instance.nr_os = generateOSNr(tipo, classe)
+                    instance.tipo = tipo
+                    instance.status = 1
+                    instance.classe = classe
+                    
+                    instance.ch_classe_id = request.user.id
+                    instance.ch_cp_id = getIDChCP()
+                    instance.cmt_pel_id = getIDCmtPel(classe)
+                    
+                    saved_form = instance.save()
+                    form.save_m2m()
+                    #TODO redirect pra página de adicionado corretamente
+                else:
+                    #TODO redirect pra página de falha em adicionar
+                    #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
+                    pass
+
+            elif int(tipo) == 1: #Apoio Direto
+                form = OrdemServicoDireto(request.POST, classe=classe)
+                if form.is_valid():
+                    instance = form.save(commit=False)
+                    
+                    #TODO preencher
+                    instance.abertura_os_date = datetime.now()
+                    instance.nr_os = generateOSNr(tipo, classe)
+                    instance.tipo = tipo
+                    instance.status = 10
+                    instance.classe = classe
+                    
+                    instance.ch_classe_id = request.user.id
+                    instance.ch_cp_id = getIDChCP()
+                    instance.cmt_pel_id = getIDCmtPel(classe)
+                    
+                    saved_form = instance.save()
+                    form.save_m2m()
+                    #TODO redirect pra página de adicionado corretamente
+                else:
+                    #TODO redirect pra página de falha em adicionar
+                    #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
+                    pass
+            
+            elif int(tipo) == 2: #Apoio em Suprimento
+                form = OrdemServicoSuprimento(request.POST, classe=classe)
+                if form.is_valid():
+                    instance = form.save(commit=False)
+                    
+                    #TODO preencher
+                    instance.abertura_os_date = datetime.now()
+                    instance.nr_os = generateOSNr(tipo, classe)
+                    instance.tipo = tipo
+                    instance.status = 10
+                    instance.classe = classe
+                    
+                    instance.ch_classe_id = request.user.id
+                    instance.ch_cp_id = getIDChCP()
+                    instance.cmt_pel_id = getIDCmtPel(classe)
+
+                    saved_form = instance.save()
+                    form.save_m2m()
+                    #TODO redirect pra página de adicionado corretamente
+                else:
+                    #TODO redirect pra página de falha em adicionar
+                    #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
+                    pass
             else:
-                #TODO redirect pra página de falha em adicionar
-                #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
-                pass
-
-        elif int(tipo) == 1: #Apoio Direto
-            form = OrdemServicoDireto(request.POST, classe=classe)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                
-                #TODO preencher
-                instance.abertura_os_date = datetime.now()
-                instance.nr_os = generateOSNr(tipo, classe)
-                instance.tipo = tipo
-                instance.status = 10
-                instance.classe = classe
-                
-                instance.ch_classe_id = request.user.id
-                instance.ch_cp_id = getIDChCP()
-                instance.cmt_pel_id = getIDCmtPel(classe)
-                
-                saved_form = instance.save()
-                form.save_m2m()
-                #TODO redirect pra página de adicionado corretamente
-            else:
-                #TODO redirect pra página de falha em adicionar
-                #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
-                pass
-        
-        elif int(tipo) == 2: #Apoio em Suprimento
-            form = OrdemServicoSuprimento(request.POST, classe=classe)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                
-                #TODO preencher
-                instance.abertura_os_date = datetime.now()
-                instance.nr_os = generateOSNr(tipo, classe)
-                instance.tipo = tipo
-                instance.status = 10
-                instance.classe = classe
-                
-                instance.ch_classe_id = request.user.id
-                instance.ch_cp_id = getIDChCP()
-                instance.cmt_pel_id = getIDCmtPel(classe)
-
-                saved_form = instance.save()
-                form.save_m2m()
-                #TODO redirect pra página de adicionado corretamente
-            else:
-                #TODO redirect pra página de falha em adicionar
-                #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
-                pass
+                form = None
         else:
-            form = None
+            if int(tipo) == 0:
+                form = OrdemServicoConjunto()
+            elif int(tipo) == 1:
+                form = OrdemServicoDireto(classe=classe)
+            elif int(tipo) == 2:
+                form = OrdemServicoSuprimento(classe=classe)
+            else:
+                form = None
+
+        return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
     else:
-        if int(tipo) == 0:
-            form = OrdemServicoConjunto()
-        elif int(tipo) == 1:
-            form = OrdemServicoDireto(classe=classe)
-        elif int(tipo) == 2:
-            form = OrdemServicoSuprimento(classe=classe)
-        else:
-            form = None
-
-    return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
+        return render(request, "ordemDeServico/semPermissao.html")
 
 
 #@login_required

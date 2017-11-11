@@ -1,8 +1,23 @@
 from django.forms import Form, ModelForm, CheckboxSelectMultiple, ChoiceField
-from .models import OrdemDeServico, Sistema, Subsistemas, TIPO_CHOICES
+from .models import OrdemDeServico, Sistema, Subsistemas, TIPO_CHOICES, CLASSE_CHOICES
+from src.utils import getFuncaoMilitar
 
 class Tipo(Form):
     tipo = ChoiceField(label='Tipo',choices=TIPO_CHOICES)
+
+    def __init__(self, user, *args, **kwargs):
+        super(Tipo, self).__init__(*args, **kwargs)
+
+        funcao = getFuncaoMilitar(user)
+        classe = funcao.values('classe')
+        nome_funcao= funcao.values('nome_funcao')
+        permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
+
+        c = ()
+        for p in permissions:
+            if p[1] == 4:
+                c = c + (CLASSE_CHOICES[p[0]],)
+        self.fields['classe'] = ChoiceField(label='Classe', choices=c)
 
 class OrdemServicoDireto(ModelForm):
     class Meta:
