@@ -16,21 +16,28 @@
               <table class="table">
                 <tbody>
                  <tr>
-                    <th> ID </th>
-                    <th> DESCRICAO </th>
-                    <th> CLASSE </th>
-                    <th> VISUALIZAR </th>
-                 </tr>
+		    <th> NR OS </th>
+		    <th> TIPO APOIO </th>
+		    <th> CLASSE </th>
+  	    	    <th> SISTEMA </th>
+		    <th> DATA ABERTURA </th>
+		    <th> STATUS ATUAL </th>
+		    <th> VISUALIZAR </th>
+	  	  </tr>
+	  
 
-                    {% for item in data %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.descricao }}</td>
-                        <td>{{ item.classe }}</td>
-                        <td><a href="/ordemservico/visualizar/{{ item.id }}">Ver OS</a> </td>
-                    </tr>
-                     {% endfor %}
-              </tbody></table>
+		   {% for item in data %}
+		    <tr>	 
+			<td>{{ item.nr_os }}</td>
+			<td>{{ item.tipo }}</td>
+			<td>{{ item.classe }}</td>	 
+			<td>{{ item.sistema_id }}</td>
+			<td>{{ item.abertura_os_date }}</td>
+			<td>{{ item.status }} </td>
+			<td><a href="/ordemservico/visualizar/{{ item.id }}">Ver OS</a> </td>
+		    </tr>
+		  {% endfor %}
+		</tbody></table>
             </div>
             <!-- /.box-body -->
 

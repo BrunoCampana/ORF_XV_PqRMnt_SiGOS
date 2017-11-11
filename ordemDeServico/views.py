@@ -244,7 +244,7 @@ def consultarOS(request):
         form = ConsultaOrdemServico(request.POST)
         form.is_valid()
         #result = Sistema.objects.filter(**form.cleaned_data).values()
-        result = OrdemDeServico.objects.filter(**form.cleaned_data).values()
+        result = OrdemDeServico.objects.filter(**form.cleaned_data).order_by('status','-abertura_os_date').values()
     
     else:
         form = ConsultaOrdemServico()
