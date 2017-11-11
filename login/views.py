@@ -3,11 +3,12 @@ from .forms import Login, Mudar_senha
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from src.utils import getFuncaoMilitar, meu_mudar_senha
+from src.utils import getFuncaoMilitar, meu_mudar_senha, meu_login_required, meu_anonymous_required
 
 
 # Create your views here.
 
+@meu_anonymous_required
 def login(request):
     if request.method == 'POST':
         form = Login(request.POST)
@@ -38,6 +39,7 @@ def login(request):
 
     return render(request, 'login/form.html', {'form': form})
 
+@meu_login_required
 def mudarsenha(request):
     if request.method == 'POST':
         form = Mudar_senha(request.POST)
@@ -53,6 +55,7 @@ def mudarsenha(request):
         form = Mudar_senha()
     return render(request, 'login/form_mudar_senha.html', {'form': form})
 
+@meu_login_required
 def logout(request):
     auth_logout(request)
     return redirect('/login')

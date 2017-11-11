@@ -4,10 +4,11 @@ from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprime
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
-from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr
+from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required
 
 # Create your views here.
-#@login_required
+
+@meu_login_required
 def escolhertipoOS(request):
     funcao = getFuncaoMilitar(request.user)
     classes = funcao.values('classe')
@@ -28,7 +29,7 @@ def escolhertipoOS(request):
         form = Tipo(classe=classes)
     return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Abrir'})
 
-#@login_required
+@meu_login_required
 def criarordemservico(request, tipo, classe):
     funcao = getFuncaoMilitar(request.user)
     #classe = funcao.values('classe')
@@ -132,7 +133,7 @@ def criarordemservico(request, tipo, classe):
         return render(request, "ordemDeServico/semPermissao.html")
 
 
-#@login_required
+@meu_login_required
 def caixadeentrada(request):
     alldata = OrdemDeServico.objects.all()
     funcao = getFuncaoMilitar(request.user)
@@ -154,6 +155,7 @@ def caixadeentrada(request):
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
 
+@meu_login_required
 def caixadeentradatest(request):
     print("TEST")
     alldata = OrdemDeServico.objects.all()
@@ -172,19 +174,21 @@ def caixadeentradatest(request):
         #PORÉM APENAS QUANDO O STATUS FOR COMPATIVEL COM SUA FUNCAO
         for p in permissions:
             if p[1] == 1: #CH CP
-                data = data + list(alldata.filter(classe=p[0], status__in=[1, 10]).values())
+                data = data + list(alldata.filter(status__in=[1, 10]).values())
             elif p[1] == 3: #CMT PEL
                 data = data + list(alldata.filter(classe=p[0], status__in=[2, 3, 4, 5, 6, 7, 8]).values())
             elif p[1] == 4: #CH CL
                 data = data + list(alldata.filter(classe=p[0], status=9).values())
-
-    print(data)
+    
+    data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+    data.sort(key=lambda x: x['status'], reverse=False)
+    print(data[0])
     return render(request, 'ordemDeServico/caixa.html', {'data': data})
     #return redirect('/ordemservico/todo/cxentradasemfuncao')
 
 
 
-#@login_required
+@meu_login_required
 def visualizarOS(request, os_id):
     if request.method == 'POST':
         #TODO TRATAR RECEBIMENTO DOS FORMS
@@ -297,7 +301,7 @@ def visualizarOS(request, os_id):
 
         return redirect("/ordemservico/todo")
 
-#@login_required
+@meu_login_required
 def consultarOS(request):
     if request.method == 'POST':
         form = ConsultaOrdemServico(request.POST)
