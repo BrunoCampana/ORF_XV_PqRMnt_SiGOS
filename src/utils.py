@@ -1,5 +1,9 @@
 from ordemDeServico.models import Sistema, OrdemDeServico
 from login.models import Funcao
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 def getFuncaoMilitar(user):
     user_id = user.id
@@ -18,4 +22,28 @@ def getOSfromId(os_id):
 
 def generateOSNr(tipo, classe):
     return 0
+
+def meu_login_required(function=None, login_url=None):
+	actual_decorator = login_required(function=function, redirect_field_name=None, login_url=login_url)
+	return actual_decorator
+
+def meu_anonymous_required(func):
+	def func_wrapper(request):
+		if not request.user.is_authenticated():
+			return func(request)
+		else:
+			return redirect('/home')
+	return func_wrapper
+
+def meu_mudar_senha(form, request):
+	username = request.user.get_username()
+	password = form.cleaned_data['novaSenha']
+
+	user = User.objects.get(username__exact=request.user.get_username())
+	user.set_password(form.cleaned_data['novaSenha'])
+	user.save()	
+
+	user = authenticate(username=username, password=password)
+	if user is not None:
+		login(request, user)
 
