@@ -1,21 +1,24 @@
 # Sistema de Gestão de Ordem de Serviço do Pq R Mnt12.
 
-## Passos de Instalação:
+# Passos de Instalação:
 
-* Instalar Python 3 e pip:
+## Instalar Python 3 e pip:
 ```bash
   sudo apt-get update && sudo apt-get -y upgrade
   sudo apt-get install python3
   sudo apt-get install -y python3-pip
  ```
-* Instalar Django:
+## Instalar Django:
+```bash
   sudo pip3 install django
-
-* Instalar Django AdminLTE 2:
+```
+## Instalar Django AdminLTE 2:
+```bash
   pip3 install django-adminlte2
+```
   
-* Instalar MySQL
-  ** Adicionar o MySQL ao repositório de Software
+## Instalar MySQL
+  ### Adicionar o MySQL ao repositório de Software
 ```bash
     cd /tmp
     curl -OL https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb
@@ -24,13 +27,13 @@
     rm mysql-apt-config*
  ```
     
-  ** Instalar MySQL Server package:
+  ### Instalar MySQL Server package:
  ```bash
     sudo apt-get install mysql-server
  ```
     (Nota: durante a instalação, será configurada a senha para o 'root', que será utilizada no arquivo 'settings.py' do projeto. No projetom utilizamos a senha 'toor')
     
-* Instalar MySQL Database Connector:
+## Instalar MySQL Database Connector:
 ```bash
   sudo apt-get install python3-dev
   sudo apt-get install python3-dev libmysqlclient-dev
@@ -38,13 +41,13 @@
   sudo apt-get install mysql-server
 ```
 
-* Criar o banco de dados:
+## Criar o banco de dados:
 ```bash
   mysql -u root -p         # entrar com a senha root
   >> create database sigos;
   ```
   
-## Alguns comandos úteis do django:
+# Alguns comandos úteis do django:
 ```bash
   python3 manage.py makemigrations   # Responsável por criar novas migrações de acordo com mudanças observadas nos modelos
   python3 manage.py migrate          # Realiza as migrações de fato
