@@ -31,7 +31,7 @@
  ```bash
     sudo apt-get install mysql-server
  ```
-    (Nota: durante a instalação, será configurada a senha para o 'root', que será utilizada no arquivo 'settings.py' do projeto. No projetom utilizamos a senha 'toor')
+    (Nota: durante a instalação, será configurada a senha para o 'root', que será utilizada no arquivo 'settings.py' do projeto. No projeto utilizamos a senha 'toor')
     
 ## Instalar MySQL Database Connector:
 ```bash
