@@ -151,7 +151,7 @@ def caixadeentrada(request):
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
         if nome_func == 4:
             #CHClasse
-            data = alldata.filter(classe=classe, status=10).order_by('status', '-abertura_os_date').values()
+            data = alldata.filter(classe=classe, status=9).order_by('status', '-abertura_os_date').values()
             return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
 
@@ -165,7 +165,7 @@ def caixadeentradatest(request):
     nome_funcao= funcao.values('nome_funcao')
 
     permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
-    
+
     print(permissions)
     data = []
     if funcao:
@@ -179,7 +179,7 @@ def caixadeentradatest(request):
                 data = data + list(alldata.filter(classe=p[0], status__in=[2, 3, 4, 5, 6, 7, 8]).values())
             elif p[1] == 4: #CH CL
                 data = data + list(alldata.filter(classe=p[0], status=9).values())
-    
+
     data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
     data.sort(key=lambda x: x['status'], reverse=False)
     print(data[0])
@@ -199,7 +199,7 @@ def visualizarOS(request, os_id):
         nome_funcao= funcao.values('nome_funcao')
 
         permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
-        
+
         print(permissions)
 
         classe = {x['classe'] for x in list(classe)}
