@@ -137,36 +137,12 @@ def criarordemservico(request, tipo, classe):
 def caixadeentrada(request):
     alldata = OrdemDeServico.objects.all()
     funcao = getFuncaoMilitar(request.user)
-    if funcao:
-        classe = int(funcao[0]["classe"])
-        nome_func = int(funcao[0]["nome_funcao"])
-        if nome_func == 1:
-	    #CHCP tem acesso a todas classes
-            data = alldata.filter(Q(status=1) | Q(status=10)).order_by('status','-abertura_os_date').values()
-            print(data)
-            return render(request, 'ordemDeServico/caixa.html', {'data': data})
-        if nome_func == 3:
-	    #CMTPel, acesso apenas a sua classe
-            data = alldata.filter(classe=classe, status__gte=2, status__lte=8).order_by('status', '-abertura_os_date').values()
-            return render(request, 'ordemDeServico/caixa.html', {'data': data})
-        if nome_func == 4:
-            #CHClasse
-            data = alldata.filter(classe=classe, status=9).order_by('status', '-abertura_os_date').values()
-            return render(request, 'ordemDeServico/caixa.html', {'data': data})
-    return redirect('/login')
-
-@meu_login_required
-def caixadeentradatest(request):
-    print("TEST")
-    alldata = OrdemDeServico.objects.all()
-    funcao = getFuncaoMilitar(request.user)
 
     classe = funcao.values('classe')
     nome_funcao= funcao.values('nome_funcao')
 
     permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
 
-    print(permissions)
     data = []
     if funcao:
 
@@ -180,11 +156,11 @@ def caixadeentradatest(request):
             elif p[1] == 4: #CH CL
                 data = data + list(alldata.filter(classe=p[0], status=9).values())
 
-    data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
-    data.sort(key=lambda x: x['status'], reverse=False)
-    print(data[0])
-    return render(request, 'ordemDeServico/caixa.html', {'data': data})
-    #return redirect('/ordemservico/todo/cxentradasemfuncao')
+        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+        data.sort(key=lambda x: x['status'], reverse=False)
+        print(data[0])
+        return render(request, 'ordemDeServico/caixa.html', {'data': data})
+    return redirect('/login')
 
 
 
