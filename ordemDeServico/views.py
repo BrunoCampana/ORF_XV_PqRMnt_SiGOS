@@ -158,7 +158,6 @@ def caixadeentrada(request):
 
         data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
-        print(data[0])
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
 
