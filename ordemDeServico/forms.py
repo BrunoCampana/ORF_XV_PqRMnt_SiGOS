@@ -95,4 +95,6 @@ class ConsultaOrdemServico(ModelForm):
 
         #Direto
         fields = ['id',
-                    'classe']
+        'classe',
+        'status',
+        'om_requerente']
