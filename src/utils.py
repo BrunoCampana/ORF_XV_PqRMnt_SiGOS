@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 def getFuncaoMilitar(user):
     user_id = user.id
@@ -21,7 +22,16 @@ def getOSfromId(os_id):
     return OrdemDeServico.objects.filter(id=os_id)
 
 def generateOSNr(tipo, classe):
-    return 0
+    recent_os_list = OrdemDeServico.objects.filter(classe=classe,tipo=tipo).order_by('-abertura_os_date').values()
+    if len(recent_os_list) == 0:
+        return 1
+    recent_os = recent_os_list[0]
+    recent_date = recent_os['abertura_os_date']
+    now_date = datetime.now() - timedelta(hours=4)
+    print(recent_date)
+    if now_date.year > recent_date.year:
+        return 1
+    return (recent_os['nr_os'] + 1)
 
 def meu_login_required(function=None, login_url=None):
 	actual_decorator = login_required(function=function, redirect_field_name=None, login_url=login_url)
