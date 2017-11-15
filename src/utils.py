@@ -47,3 +47,9 @@ def meu_mudar_senha(form, request):
 	if user is not None:
 		login(request, user)
 
+def incrementarStatus(os, status):
+    print("AINDA NÃO TA INCREMENTANDO!!!")
+    print("FAZER ISSO LOGO!!!")
+    print(type(os))
+    setattr(os, 'status', status+1)
+    os.save()
