@@ -450,7 +450,7 @@ def os_print(db_dict):
 
     print_dict = {}
     for key in db_dict:
-        if db_dict[key] is not None and key is not 'id' and db_dict[key] is not '':
+        if db_dict[key] and key is not 'id':
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
             elif key == 'tipo':
