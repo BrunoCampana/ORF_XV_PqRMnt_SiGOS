@@ -197,7 +197,7 @@ def caixadeentrada(request):
 def visualizarOS(request, os_id):
     os = getOSfromId(os_id)
     permissions = getPermissions(request.user)
-    print_value = list(os.values())[0]
+    print_value = model_to_dict(os)
 
     if request.method == 'POST':
         print(permissions)
@@ -279,11 +279,9 @@ def visualizarOS(request, os_id):
                 form_consulta = '' #FORM CIENTE
                 submit = '' #HTMLSUBMIT
 
-                ret_os_status = list(os.values('status'))[0]['status']
-
-                print_value = model_to_dict(os)
+                ret_os_status = print_value['status']
                 print_value = os_form(print_value)
-                ret_os_status = print_value['Status']
+
 
                 # ch cp ou adj cp
                 if (1 in nome_funcao or 2 in nome_funcao):
