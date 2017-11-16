@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas, OrdemServicoConjuntoFinal30, OrdemServicoConjuntoFinal39
-from .models import Sistema, OrdemDeServico
+from .models import Sistema, OrdemDeServico, OM
 from login.models import Funcao
 from datetime import datetime
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
@@ -12,9 +12,9 @@ from collections import OrderedDict
 
 
 TIPO_CHOICES = (
-    (0, 'Apoio em conjunto'),
-    (1, 'Apoio direto'),
-    (2, 'Apoio em suprimento'),
+    (1, 'Apoio em conjunto'),
+    (2, 'Apoio direto'),
+    (3, 'Apoio em suprimento'),
 )
 
 STATUS_CHOICES = (
@@ -191,7 +191,7 @@ def caixadeentrada(request):
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
-          p['tipo']=TIPO_CHOICES[j][1]
+          p['tipo']=TIPO_CHOICES[j-1][1]
         data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
@@ -403,10 +403,14 @@ def consultarOS(request):
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
        j=int(p['tipo'])
-       p['tipo']=TIPO_CHOICES[j][1]
+       p['tipo']=TIPO_CHOICES[j-1][1]
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
+
+    sistema = Sistema.objects.all().values()
+    om = OM.objects.all().values()
+
     os_names = OrderedDict()
     os_names['id'] = 'ID'
     os_names['prioridade'] = 'Prioridade'
@@ -426,11 +430,12 @@ def os_print(db_dict):
     os_names['serv_realizado'] = 'Serviço realizado'
     os_names['subsistemas_manutenidos'] = 'Subsistemas manutenidos'
     os_names['quant_homens'] = 'Quantidade de homens'
-    os_names['custo_total'] = 'Custo total'
+    os_names['custo_total'] = 'Custo total (em R$)'
     os_names['medidas_corretivas'] = 'Medidas corretivas'
     os_names['aguardando_inspecao_date'] = 'Data de aguardando inspeção'
     os_names['realizando_inspecao_date'] = 'Data de realizando inspeção'
     os_names['aguardando_manutencao_date'] = 'Data de aguardando manutenção'
+    os_names['em_manutencao_date'] = 'Data de ínicio de manutenção'
     os_names['realizacao_date'] = 'Data de realização'
     os_names['remanutencao_date'] = 'Data de remanutenção'
     os_names['aguardando_testes_date'] = 'Data de aguardando testes'
@@ -438,12 +443,11 @@ def os_print(db_dict):
     os_names['aguardando_remessa_date'] = 'Data de aguardando remessa'
     os_names['aguardando_ciente_date'] = 'Data de aguardando ciente'
     os_names['fechada_sem_ciente_date'] = 'Data de fechamento sem ciente'
-    os_names['em_manutencao_date'] = 'Data de ínicio de manutenção'
     os_names['fechada_arquivar_date'] = 'Data de fechamento/arquivamento'
     os_names['prestador_servico'] = 'Prestador de serviço'
     os_names['suprimento_aplicado'] = 'Suprimento aplicado'
     os_names['sistema'] = 'Sistema'
-    os_names['tempo'] = 'tempo'
+    os_names['tempo'] = 'Tempo (em horas trabalhadas)'
     os_names['motivo'] = 'Motivo'
     os_names['ch_classe'] = 'Chefe de classe'
     os_names['cmt_pel'] = 'Cmt Pel'
@@ -452,8 +456,6 @@ def os_print(db_dict):
     print_dict = OrderedDict()
 
 
-    sistema = Sistema.object.all().values()
-    print(militar)
 
     for key, v in os_names.items():
         if db_dict[key] and key is not 'id':
@@ -468,9 +470,15 @@ def os_print(db_dict):
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
-            elif key == 'sistema_id':
-               j=int(db_dict['sistema_id'])
-               db_dict['sistema_id']=sistema[j-1]['descricao']
+            elif key == 'sistema':
+               j=int(db_dict['sistema'])
+               value = sistema[j-1]['descricao']
+            elif key =='om_requerente':
+               j=int(db_dict['om_requerente'])
+               value = om[j-1]['nome']
+            elif key == 'status':
+               j=int(db_dict['status'])
+               value = STATUS_CHOICES[j-1][1]
             else:
                 value = db_dict[key]
             print_dict[v] = value
