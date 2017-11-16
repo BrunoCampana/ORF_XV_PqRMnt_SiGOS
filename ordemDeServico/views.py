@@ -103,7 +103,8 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     instance.abertura_os_date = datetime.now()
-                    instance.nr_os = generateOSNr(tipo, classe)
+                    nr_os_temp = generateOSNr(tipo, classe)
+                    instance.nr_os = nr_os_temp
                     instance.tipo = tipo
                     instance.status = 10
                     instance.classe = classe
@@ -127,7 +128,8 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     instance.abertura_os_date = datetime.now()
-                    instance.nr_os = generateOSNr(tipo, classe)
+                    nr_os_temp = generateOSNr(tipo, classe)
+                    instance.nr_os = nr_os_temp
                     instance.tipo = tipo
                     instance.status = 10
                     instance.classe = classe
