@@ -8,6 +8,7 @@ from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, gen
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from  login.models import InformacaoMilitar
+from collections import OrderedDict
 
 
 TIPO_CHOICES = (
@@ -401,50 +402,52 @@ def consultarOS(request):
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
-    os_names = {'serv_realizado': 'Serviço realizado',
-                'quant_homens': 'Quantidade de homens',
-                'realizacao_date': 'Data de realização',
-                'classe': 'Classe',
-                'remanutencao_date': 'Data de remanutenção',
-                'custo_total': 'Custo total',
-                'medidas_corretivas': 'Medidas corretivas',
-                'quantidade': 'Quantidade',
-                'subsistemas_manutenidos': 'Subsistemas manutenidos',
-                'abertura_os_date': 'Data de abertura',
-                'pit': 'PIT',
-                'ordem_recolhimento': 'Ordem de Recolhimento',
-                'aguardando_inspecao_date': 'Data de aguardando inspeção',
-                'aguardando_ciente_date': 'Data de aguardando ciente',
-                'aguardando_remessa_date': 'Data de aguardando remessa',
-                'desc_material': 'Descrição do material',
-                'tipo': 'Tipo',
-                'em_manutencao_date': 'Data de ínicio de manutenção',
-                'guia_recolhimento': 'Guia de recolhimento',
-                'fechada_arquivar_date': 'Data de fechamento/arquivamento',
-                'testes_em_execucao_date': 'Data de testes em execução',
-                'prestador_servico': 'Prestador de serviço',
-                'om_requerente': 'OM requerente',
-                'fechada_sem_ciente_date': 'Data de fechamento sem ciente',
-                'ch_classe': 'Chefe de classe',
-                'status': 'Status',
-                'sistema': 'Sistema',
-                'cmt_pel': 'Cmt Pel',
-                'nr_os': 'Nr OS',
-                'aguardando_testes_date': 'Data de aguardando testes',
-                'realizando_inspecao_date': 'Data de realizando inspeção',
-                'tempo': 'tempo',
-                'motivo': 'Motivo',
-                'suprimento_aplicado': 'Suprimento aplicado',
-                'prioridade': 'Prioridade',
-                'num_diex': 'Nr DIEX',
-                'nd': 'ND',
-                'ch_cp': 'Chefe de CP',
-                'aguardando_manutencao_date':'Data de aguardando manutenção',
-                'id': 'ID'
-             }
 
-    print_dict = {}
-    for key in db_dict:
+    os_names = OrderedDict()
+    os_names['id'] = 'ID'
+    os_names['prioridade'] = 'Prioridade'
+    os_names['nr_os'] = 'Nr OS'
+    os_names['status'] = 'Status'
+    os_names['classe'] = 'Classe'
+    os_names['tipo'] = 'Tipo'
+    os_names['abertura_os_date'] = 'Data de abertura'
+    os_names['pit'] = 'PIT'
+    os_names['nd'] = 'ND'
+    os_names['guia_recolhimento'] = 'Guia de recolhimento'
+    os_names['ordem_recolhimento'] = 'Ordem de Recolhimento'
+    os_names['num_diex'] = 'Nr DIEX'
+    os_names['desc_material'] = 'Descrição do material'
+    os_names['quantidade'] = 'Quantidade'
+    os_names['om_requerente'] = 'OM requerente'
+    os_names['serv_realizado'] = 'Serviço realizado'
+    os_names['subsistemas_manutenidos'] = 'Subsistemas manutenidos'
+    os_names['quant_homens'] = 'Quantidade de homens'
+    os_names['custo_total'] = 'Custo total'
+    os_names['medidas_corretivas'] = 'Medidas corretivas'
+    os_names['aguardando_inspecao_date'] = 'Data de aguardando inspeção'
+    os_names['realizando_inspecao_date'] = 'Data de realizando inspeção'
+    os_names['aguardando_manutencao_date'] = 'Data de aguardando manutenção'
+    os_names['realizacao_date'] = 'Data de realização'
+    os_names['remanutencao_date'] = 'Data de remanutenção'
+    os_names['aguardando_testes_date'] = 'Data de aguardando testes'
+    os_names['testes_em_execucao_date'] = 'Data de testes em execução'
+    os_names['aguardando_remessa_date'] = 'Data de aguardando remessa'
+    os_names['aguardando_ciente_date'] = 'Data de aguardando ciente'
+    os_names['fechada_sem_ciente_date'] = 'Data de fechamento sem ciente'
+    os_names['em_manutencao_date'] = 'Data de ínicio de manutenção'
+    os_names['fechada_arquivar_date'] = 'Data de fechamento/arquivamento'
+    os_names['prestador_servico'] = 'Prestador de serviço'
+    os_names['suprimento_aplicado'] = 'Suprimento aplicado'
+    os_names['sistema'] = 'Sistema'
+    os_names['tempo'] = 'tempo'
+    os_names['motivo'] = 'Motivo'
+    os_names['ch_classe'] = 'Chefe de classe'
+    os_names['cmt_pel'] = 'Cmt Pel'
+    os_names['ch_cp'] = 'Chefe de CP'
+
+    print_dict = OrderedDict()
+
+    for key, v in os_names.items():
         if db_dict[key] and key is not 'id':
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
@@ -461,7 +464,7 @@ def os_print(db_dict):
 
             else:
                 value = db_dict[key]
-            print_dict[os_names[key]] = value
+            print_dict[v] = value
 
     return print_dict
 
