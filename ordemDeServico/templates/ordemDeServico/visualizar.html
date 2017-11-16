@@ -35,6 +35,7 @@
 {% block list %}
     <form method="post">
         {% csrf_token %}
+        {{ pre_form_message|safe }}
         {{ form_consulta }}
         {{ submit|safe}}
     </form>

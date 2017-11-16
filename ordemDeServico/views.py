@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas
+from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas, OrdemServicoConjuntoFinal30, OrdemServicoConjuntoFinal39
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
@@ -232,6 +232,12 @@ def visualizarOS(request, os_id):
                         sucesso = request.POST.get('testesucesso')
                         print(sucesso)
                         if(sucesso == 'sim'): #SIM 
+                            nd_os = list(os.values('nd'))[0]['nd']
+                            if(nd_os == 30):
+                                form = OrdemServicoConjuntoFinal30(classe=ret_os_classe)
+                            else:
+                                form = OrdemServicoConjuntoFinal39(classe_ret_os_classe)
+                            return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                             print("SIM")
                             #RENDER NEW FORM
                             #incrementarStatus(os, 8)
@@ -239,9 +245,10 @@ def visualizarOS(request, os_id):
                             print("NAO")
                             #RENDER NEW FORM
                             medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
+                            pre_message = "Medidas corretivas já aplicadas:<br>" + medidas_corretivas_os + "<br>"
                             form_consulta = MedidasCorretivas() #FORM CIENTE
                             submit = '<button name="status" value="' + str(status_os) + '" type="submit">Salvar</button>'
-                            return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
+                            return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit, 'pre_form_message': pre_message})
                             #if(status_os == 7):
                             #    incrementarStatus(os, 7)
                         print("STATUS " + str(status_os))
