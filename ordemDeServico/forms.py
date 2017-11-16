@@ -91,6 +91,12 @@ class OrdemServicoConjunto(ModelForm):
         'sistema',
         'quantidade']
 
+    def __init__(self,*args,**kwargs):
+        classe = kwargs.pop('classe')
+        super(OrdemServicoConjunto,self).__init__(*args,**kwargs)
+        if classe != 0:
+            self.fields['sistema'].queryset = Sistema.objects.filter(classe=classe)
+
 class ConsultaOrdemServico(ModelForm):
     class Meta:
         model = OrdemDeServico
@@ -106,6 +112,61 @@ class ConsultaOrdemServico(ModelForm):
         self.fields['classe'].required = False
         self.fields['status'].required = False
         self.fields['om_requerente'].required = False
+
+class OrdemServicoConjuntoFinal30(ModelForm):
+    class Meta:
+        model = OrdemDeServico
+
+        #Direto
+        fields = ['tempo',
+        'serv_realizado',
+        'suprimento_aplicado',
+        'custo_total',
+        'quant_homens',
+        'subsistemas_manutenidos']
+
+        labels = {
+            'tempo':'Tempo (em horas)',
+            'custo_total':'Custo Total (em R$)'
+        }
+
+        widgets = {
+            'subsistemas_manutenidos': CheckboxSelectMultiple(),
+        }
+
+
+    def __init__(self,*args,**kwargs):
+        classe = kwargs.pop('classe')
+        super(OrdemServicoDireto,self).__init__(*args,**kwargs)
+        if classe != 0:
+            self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)
+
+class OrdemServicoConjuntoFinal39(ModelForm):
+    class Meta:
+        model = OrdemDeServico
+
+        #Direto
+        fields = ['tempo',
+        'serv_realizado',
+        'custo_total',
+        'prestador_servico',
+        'subsistemas_manutenidos']
+
+        labels = {
+            'tempo':'Tempo (em horas)',
+            'custo_total':'Custo Total (em R$)'
+        }
+
+        widgets = {
+            'subsistemas_manutenidos': CheckboxSelectMultiple(),
+        }
+
+
+    def __init__(self,*args,**kwargs):
+        classe = kwargs.pop('classe')
+        super(OrdemServicoDireto,self).__init__(*args,**kwargs)
+        if classe != 0:
+            self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)
 
 #class ConsultaOrdemServico(ModelForm):
 #    class Meta:
