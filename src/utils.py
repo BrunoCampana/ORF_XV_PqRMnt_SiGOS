@@ -48,8 +48,15 @@ def meu_mudar_senha(form, request):
 		login(request, user)
 
 def incrementarStatus(os, status):
-    print("AINDA NÃO TA INCREMENTANDO!!!")
-    print("FAZER ISSO LOGO!!!")
-    print(type(os))
-    setattr(os, 'status', status+1)
+    os = os.get()
+    os.status = status + 1
     os.save()
+
+def getPermissions(user):
+    funcao = getFuncaoMilitar(user)
+    classe = funcao.values('classe')
+    nome_funcao= funcao.values('nome_funcao')
+ 
+    permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
+ 
+    return permissions

@@ -4,7 +4,7 @@ from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprime
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
-from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus
+from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 
 # Create your views here.
 
@@ -166,26 +166,67 @@ def caixadeentrada(request):
 @meu_login_required
 def visualizarOS(request, os_id):
     os = getOSfromId(os_id)
+    permissions = getPermissions(request.user)
+
     if request.method == 'POST':
+        print(permissions)
+        print(request.POST)
         #TODO TRATAR RECEBIMENTO DOS FORMS
-        status_os = list(os.values('status'))[0]['status']
-        if(status_os in [1, 2, 3, 4, 5, 6, 10]):
-            incrementarStatus(os, status_os)
-        elif(status_os in [7, 8]):
-            sucesso = request.POST.get('testesucesso')
-            if(sucesso == 'sim'): #SIM 
-                if(status_os == 7):
+        chaves = request.POST.keys()
+        if os:
+            status_os = list(os.values('status'))[0]['status']
+            ret_os_classe = list(os.values('classe'))[0]['classe']
+
+            if(status_os in [1, 10]):
+                #CHCP
+                p = [x[1] for x in permissions]
+                if 1 in p:
+                    print("STATUS " + str(status_os))
                     incrementarStatus(os, status_os)
-                incrementarStatus(os, status_os)
-                #else: #NÃO
-                    
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+            if(status_os in [2, 3, 4, 5, 6]):
+                #CMT PEL
+                if [ret_os_classe, 3] in permissions:
+                    print("STATUS " + str(status_os))
+                    incrementarStatus(os, status_os)
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+            elif(status_os in [7, 8]):
+                #CMT PEL
+                if [ret_os_classe, 3] in permissions:
+                    sucesso = request.POST.get('testesucesso')
+                    print(sucesso)
+                    if(sucesso == 'sim'): #SIM 
+                        print("SIM")
+                        #RENDER NEW FORM
+                        #incrementarStatus(os, 8)
+                    else:
+                        print("NAO")
+                        #RENDER NEW FORM
+                        #if(status_os == 7):
+                        #    incrementarStatus(os, 7)
+                    print("STATUS " + str(status_os))
+     
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+
+            elif(status_os in [9]):
+                #CHCL
+                if [ret_os_classe, 4] in permissions:
+                    incrementarStatus(os, 9)
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+                print("STATUS " + str(status_os))
+            
+            else:
+                return render(request, "ordemDeServico/semPermissao.html")
+                        
         return redirect("/ordemservico/todo")
     else:
         funcao = getFuncaoMilitar(request.user)
         classe = funcao.values('classe')
         nome_funcao= funcao.values('nome_funcao')
-
-        permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
 
         print(permissions)
 
@@ -238,11 +279,11 @@ def visualizarOS(request, os_id):
                                 submit = '<button name="status" value="6" type="submit">Iniciar testes</button>'
 
                             elif(ret_os_status == 7): #TESTES EM EXECUÇÃO
-                                submit = '<button name="status" value="7" type="submit">Finalizar testes</button>'
+                                submit = '<p>Passou no teste?</p><br><button name="testesucesso" value="sim" type="submit">Sim</button><button name="testesucesso" value="nao" type="submit">Não</button>'
 
                             elif(ret_os_status == 8): #REMANUTENÇÃO
                                 form_consulta = '' #FORM CIENTE
-                                submit = '<button name="testesuccesso" value="sim" type="submit">Sim</button><button name="testesucesso" value="nao" type="submit">Não</button>'
+                                submit = '<p>Passou no teste?</p><br><button name="testesucesso" value="sim" type="submit">Sim</button><button name="testesucesso" value="nao" type="submit">Não</button>'
 
                         # ch classe
                         elif ([ret_os_classe, 4] in permissions):
