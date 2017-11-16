@@ -98,3 +98,9 @@ class ConsultaOrdemServico(ModelForm):
         'classe',
         'status',
         'om_requerente']
+
+#class ConsultaOrdemServico(ModelForm):
+#    class Meta:
+#        model = OrdemDeServico
+#
+#        fields = ['falha']
