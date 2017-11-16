@@ -181,13 +181,14 @@ def caixadeentrada(request):
        
         for p in data:
           if p['sistema_id']:
-              j=int(p['sistema_id']) - 1
-              p['sistema_id']=sistema[j]['descricao']
+              j=int(p['sistema_id'])
+              p['sistema_id']=sistema[j-1]['descricao']
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
-          p['tipo']=TIPO_CHOICES[j-1][1]
-        #data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+          print("j: " + str(j) + "Tipo choiches " + TIPO_CHOICES[j][1] + " tipo do bd " + str(p['tipo']))
+          p['tipo']=TIPO_CHOICES[j][1]
+        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
@@ -432,7 +433,7 @@ def os_print(db_dict):
                 'nr_os': 'Nr OS',
                 'aguardando_testes_date': 'Data de aguardando testes',
                 'realizando_inspecao_date': 'Data de realizando inspeção',
-                'tempo': 'tempo',
+                'tempo': 'Tempo (em horas)',
                 'motivo': 'Motivo',
                 'suprimento_aplicado': 'Suprimento aplicado',
                 'prioridade': 'Prioridade',
@@ -444,6 +445,7 @@ def os_print(db_dict):
              }
 
     print_dict = {}
+    militar = InformacaoMilitar.objects.all()
     for key in db_dict:
         if db_dict[key] and key is not 'id':
             if key == 'pit':
@@ -456,7 +458,7 @@ def os_print(db_dict):
                 else:
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
-                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + User.objects.get(id=db_dict[key]).first_name
+               value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
 
             else:
                 value = db_dict[key]
