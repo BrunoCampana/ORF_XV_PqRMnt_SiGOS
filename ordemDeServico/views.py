@@ -68,7 +68,7 @@ def criarordemservico(request, tipo, classe):
     if([classe, 4] in permissions):
         if request.method == 'POST':
             if int(tipo) == 0: #Apoio em Conjunto
-                form = OrdemServicoConjunto(request.POST)
+                form = OrdemServicoConjunto(request.POST,classe=classe)
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
@@ -142,7 +142,7 @@ def criarordemservico(request, tipo, classe):
                 form = None
         else:
             if int(tipo) == 0:
-                form = OrdemServicoConjunto()
+                form = OrdemServicoConjunto(classe=classe)
             elif int(tipo) == 1:
                 form = OrdemServicoDireto(classe=classe)
             elif int(tipo) == 2:
@@ -355,8 +355,9 @@ def consultarOS(request):
         form = ConsultaOrdemServico()
         data = {}
     for p in data:
-       j=int(p['sistema_id'])
-       p['sistema_id']=sistema[j]['descricao']
+       if p['sistema_id']:
+          j=int(p['sistema_id'])
+          p['sistema_id']=sistema[j]['descricao']
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
        j=int(p['tipo'])
