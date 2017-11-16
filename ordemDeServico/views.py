@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas, OrdemServicoConjuntoFinal30, OrdemServicoConjuntoFinal39
-from .models import Sistema, OrdemDeServico, OM
+from .models import Sistema, OrdemDeServico, OM, TIPO_CHOICES, STATUS_CHOICES
 from login.models import Funcao
 from datetime import datetime
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
@@ -11,6 +11,7 @@ from  login.models import InformacaoMilitar
 from collections import OrderedDict
 
 
+'''
 TIPO_CHOICES = (
     (1, 'Apoio em conjunto'),
     (2, 'Apoio direto'),
@@ -30,7 +31,7 @@ STATUS_CHOICES = (
     (10, 'Fechada - aguardando ciente'),
     (11, 'Fechada - ciente dado'),
 )
-
+'''
 
 
 # Create your views here.
@@ -72,7 +73,7 @@ def criarordemservico(request, tipo, classe):
 
     if([classe, 4] in permissions):
         if request.method == 'POST':
-            if int(tipo) == 0: #Apoio em Conjunto
+            if int(tipo) == 1: #Apoio em Conjunto
                 form = OrdemServicoConjunto(request.POST,classe=classe)
                 if form.is_valid():
                     instance = form.save(commit=False)
@@ -97,7 +98,7 @@ def criarordemservico(request, tipo, classe):
                     #return render(request, 'ordemDeServico/falha.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
                     pass
 
-            elif int(tipo) == 1: #Apoio Direto
+            elif int(tipo) == 2: #Apoio Direto
                 form = OrdemServicoDireto(request.POST, classe=classe)
                 if form.is_valid():
                     instance = form.save(commit=False)
@@ -122,7 +123,7 @@ def criarordemservico(request, tipo, classe):
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
                     pass
             
-            elif int(tipo) == 2: #Apoio em Suprimento
+            elif int(tipo) == 3: #Apoio em Suprimento
                 form = OrdemServicoSuprimento(request.POST, classe=classe)
                 if form.is_valid():
                     instance = form.save(commit=False)
@@ -149,11 +150,11 @@ def criarordemservico(request, tipo, classe):
             else:
                 form = None
         else:
-            if int(tipo) == 0:
+            if int(tipo) == 1: #AP CONJ
                 form = OrdemServicoConjunto(classe=classe)
-            elif int(tipo) == 1:
+            elif int(tipo) == 2: #AP DIR
                 form = OrdemServicoDireto(classe=classe)
-            elif int(tipo) == 2:
+            elif int(tipo) == 3: #AP SUP
                 form = OrdemServicoSuprimento(classe=classe)
             else:
                 form = None
@@ -464,9 +465,9 @@ def os_print(db_dict):
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
             elif key == 'tipo':
-                if db_dict[key] == 0:
+                if db_dict[key] == 1:
                     value = "Apoio em conjunto"
-                elif db_dict[key] == 1:
+                elif db_dict[key] == 2:
                     value = "Apoio direto"
                 else:
                     value = "Apoio em suprimento"
