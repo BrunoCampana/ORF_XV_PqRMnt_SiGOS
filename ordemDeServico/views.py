@@ -8,6 +8,7 @@ from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, gen
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from  login.models import InformacaoMilitar
+from collections import OrderedDict
 
 
 TIPO_CHOICES = (
@@ -77,7 +78,8 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     instance.abertura_os_date = datetime.now()
-                    instance.nr_os = generateOSNr(tipo, classe)
+                    nr_os_temp = generateOSNr(tipo, classe)
+                    instance.nr_os = nr_os_temp
                     instance.tipo = tipo
                     instance.status = 1
                     instance.classe = classe
@@ -88,7 +90,8 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/falha.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -111,7 +114,8 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -134,7 +138,8 @@ def criarordemservico(request, tipo, classe):
 
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -246,6 +251,7 @@ def visualizarOS(request, os_id):
                     if 1 in p:
                         print("STATUS " + str(status_os))
                         incrementarStatus(os, status_os)
+                        return render(request, 'ordemDeServico/ok.html',{"mensagem":"Seu ciente foi registrado"})
                     else:
                         return render(request, "ordemDeServico/semPermissao.html")
                 elif(status_os in [2, 3, 4, 5, 6]):
@@ -378,9 +384,9 @@ def consultarOS(request):
             result_dict = {}
             data_from_form = form.cleaned_data
             for entry in data_from_form.keys():
-                if data_from_form[entry]:
+                if data_from_form[entry] != '' and data_from_form[entry] != None:
                     result_dict[entry] = data_from_form[entry]
-            if result_dict: 
+            if result_dict:
                 data = OrdemDeServico.objects.filter(**result_dict).order_by('status','-abertura_os_date').values()
             else:
                 data = OrdemDeServico.objects.all().order_by('status','-abertura_os_date').values()
@@ -401,53 +407,57 @@ def consultarOS(request):
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
-    os_names = {'serv_realizado': 'Serviço realizado',
-                'quant_homens': 'Quantidade de homens',
-                'realizacao_date': 'Data de realização',
-                'classe': 'Classe',
-                'remanutencao_date': 'Data de remanutenção',
-                'custo_total': 'Custo total (em R$)',
-                'medidas_corretivas': 'Medidas corretivas',
-                'quantidade': 'Quantidade',
-                'subsistemas_manutenidos': 'Subsistemas manutenidos',
-                'abertura_os_date': 'Data de abertura',
-                'pit': 'PIT',
-                'ordem_recolhimento': 'Ordem de Recolhimento',
-                'aguardando_inspecao_date': 'Data de aguardando inspeção',
-                'aguardando_ciente_date': 'Data de aguardando ciente',
-                'aguardando_remessa_date': 'Data de aguardando remessa',
-                'desc_material': 'Descrição do material',
-                'tipo': 'Tipo',
-                'em_manutencao_date': 'Data de ínicio de manutenção',
-                'guia_recolhimento': 'Guia de recolhimento',
-                'fechada_arquivar_date': 'Data de fechamento/arquivamento',
-                'testes_em_execucao_date': 'Data de testes em execução',
-                'prestador_servico': 'Prestador de serviço',
-                'om_requerente': 'OM requerente',
-                'fechada_sem_ciente_date': 'Data de fechamento sem ciente',
-                'ch_classe': 'Chefe de classe',
-                'status': 'Status',
-                'sistema': 'Sistema',
-                'cmt_pel': 'Cmt Pel',
-                'nr_os': 'Nr OS',
-                'aguardando_testes_date': 'Data de aguardando testes',
-                'realizando_inspecao_date': 'Data de realizando inspeção',
-                'tempo': 'Tempo (em horas)',
-                'motivo': 'Motivo',
-                'suprimento_aplicado': 'Suprimento aplicado',
-                'prioridade': 'Prioridade',
-                'num_diex': 'Nr DIEX',
-                'nd': 'ND',
-                'ch_cp': 'Chefe de CP',
-                'aguardando_manutencao_date':'Data de aguardando manutenção',
-                'id': 'ID'
-             }
 
-    print_dict = {}
     sistema = Sistema.objects.all().values()
     om = OM.objects.all().values()
-    print(db_dict)
-    for key in db_dict:
+
+    os_names = OrderedDict()
+    os_names['id'] = 'ID'
+    os_names['prioridade'] = 'Prioridade'
+    os_names['nr_os'] = 'Nr OS'
+    os_names['status'] = 'Status'
+    os_names['classe'] = 'Classe'
+    os_names['tipo'] = 'Tipo'
+    os_names['abertura_os_date'] = 'Data de abertura'
+    os_names['pit'] = 'PIT'
+    os_names['nd'] = 'ND'
+    os_names['guia_recolhimento'] = 'Guia de recolhimento'
+    os_names['ordem_recolhimento'] = 'Ordem de Recolhimento'
+    os_names['num_diex'] = 'Nr DIEX'
+    os_names['desc_material'] = 'Descrição do material'
+    os_names['quantidade'] = 'Quantidade'
+    os_names['om_requerente'] = 'OM requerente'
+    os_names['serv_realizado'] = 'Serviço realizado'
+    os_names['subsistemas_manutenidos'] = 'Subsistemas manutenidos'
+    os_names['quant_homens'] = 'Quantidade de homens'
+    os_names['custo_total'] = 'Custo total (em R$)'
+    os_names['medidas_corretivas'] = 'Medidas corretivas'
+    os_names['aguardando_inspecao_date'] = 'Data de aguardando inspeção'
+    os_names['realizando_inspecao_date'] = 'Data de realizando inspeção'
+    os_names['aguardando_manutencao_date'] = 'Data de aguardando manutenção'
+    os_names['realizacao_date'] = 'Data de realização'
+    os_names['remanutencao_date'] = 'Data de remanutenção'
+    os_names['aguardando_testes_date'] = 'Data de aguardando testes'
+    os_names['testes_em_execucao_date'] = 'Data de testes em execução'
+    os_names['aguardando_remessa_date'] = 'Data de aguardando remessa'
+    os_names['aguardando_ciente_date'] = 'Data de aguardando ciente'
+    os_names['fechada_sem_ciente_date'] = 'Data de fechamento sem ciente'
+    os_names['em_manutencao_date'] = 'Data de ínicio de manutenção'
+    os_names['fechada_arquivar_date'] = 'Data de fechamento/arquivamento'
+    os_names['prestador_servico'] = 'Prestador de serviço'
+    os_names['suprimento_aplicado'] = 'Suprimento aplicado'
+    os_names['sistema'] = 'Sistema'
+    os_names['tempo'] = 'Tempo (em horas trabalhadas)'
+    os_names['motivo'] = 'Motivo'
+    os_names['ch_classe'] = 'Chefe de classe'
+    os_names['cmt_pel'] = 'Cmt Pel'
+    os_names['ch_cp'] = 'Chefe de CP'
+
+    print_dict = OrderedDict()
+
+
+
+    for key, v in os_names.items():
         if db_dict[key] and key is not 'id':
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
@@ -468,7 +478,7 @@ def os_print(db_dict):
                value = om[j-1]['nome']
             else:
                 value = db_dict[key]
-            print_dict[os_names[key]] = value
+            print_dict[v] = value
 
     return print_dict
 
