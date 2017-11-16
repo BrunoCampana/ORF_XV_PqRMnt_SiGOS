@@ -12,9 +12,9 @@ from collections import OrderedDict
 
 
 TIPO_CHOICES = (
-    (0, 'Apoio em conjunto'),
-    (1, 'Apoio direto'),
-    (2, 'Apoio em suprimento'),
+    (1, 'Apoio em conjunto'),
+    (2, 'Apoio direto'),
+    (3, 'Apoio em suprimento'),
 )
 
 STATUS_CHOICES = (
@@ -191,7 +191,7 @@ def caixadeentrada(request):
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
-          p['tipo']=TIPO_CHOICES[j][1]
+          p['tipo']=TIPO_CHOICES[j-1][1]
         data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
@@ -403,7 +403,7 @@ def consultarOS(request):
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
        j=int(p['tipo'])
-       p['tipo']=TIPO_CHOICES[j][1]
+       p['tipo']=TIPO_CHOICES[j-1][1]
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
@@ -476,6 +476,9 @@ def os_print(db_dict):
             elif key =='om_requerente':
                j=int(db_dict['om_requerente'])
                value = om[j-1]['nome']
+            elif key == 'status':
+               j=int(db_dict['status'])
+               value = STATUS_CHOICES[j-1][1]
             else:
                 value = db_dict[key]
             print_dict[v] = value
