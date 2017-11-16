@@ -18,9 +18,9 @@ CLASSE_CHOICES = (
 )
 
 TIPO_CHOICES = (
-    (0, 'Apoio em conjunto'),
-    (1, 'Apoio direto'),
-    (2, 'Apoio em suprimento'),
+    (1, 'Apoio em conjunto'),
+    (2, 'Apoio direto'),
+    (3, 'Apoio em suprimento'),
 )
 
 STATUS_CHOICES = (
@@ -72,7 +72,7 @@ class Subsistemas(models.Model):
         return u'%s' % (self.descricao)
 
 class OM(models.Model):
-    nome = models.CharField(max_length=10)
+    nome = models.CharField(max_length=30)
 
     def __str__(self):
         return u'%s' % (self.nome)
