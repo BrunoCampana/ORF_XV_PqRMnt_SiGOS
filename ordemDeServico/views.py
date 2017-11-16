@@ -407,48 +407,6 @@ def consultarOS(request):
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
-    os_names = {'serv_realizado': 'Serviço realizado',
-                'quant_homens': 'Quantidade de homens',
-                'realizacao_date': 'Data de realização',
-                'classe': 'Classe',
-                'remanutencao_date': 'Data de remanutenção',
-                'custo_total': 'Custo total',
-                'medidas_corretivas': 'Medidas corretivas',
-                'quantidade': 'Quantidade',
-                'subsistemas_manutenidos': 'Subsistemas manutenidos',
-                'abertura_os_date': 'Data de abertura',
-                'pit': 'PIT',
-                'ordem_recolhimento': 'Ordem de Recolhimento',
-                'aguardando_inspecao_date': 'Data de aguardando inspeção',
-                'aguardando_ciente_date': 'Data de aguardando ciente',
-                'aguardando_remessa_date': 'Data de aguardando remessa',
-                'desc_material': 'Descrição do material',
-                'tipo': 'Tipo',
-                'em_manutencao_date': 'Data de ínicio de manutenção',
-                'guia_recolhimento': 'Guia de recolhimento',
-                'fechada_arquivar_date': 'Data de fechamento/arquivamento',
-                'testes_em_execucao_date': 'Data de testes em execução',
-                'prestador_servico': 'Prestador de serviço',
-                'om_requerente': 'OM requerente',
-                'fechada_sem_ciente_date': 'Data de fechamento sem ciente',
-                'ch_classe': 'Chefe de classe',
-                'status': 'Status',
-                'sistema': 'Sistema',
-                'cmt_pel': 'Cmt Pel',
-                'nr_os': 'Nr OS',
-                'aguardando_testes_date': 'Data de aguardando testes',
-                'realizando_inspecao_date': 'Data de realizando inspeção',
-                'tempo': 'Tempo (em horas)',
-                'motivo': 'Motivo',
-                'suprimento_aplicado': 'Suprimento aplicado',
-                'prioridade': 'Prioridade',
-                'num_diex': 'Nr DIEX',
-                'nd': 'ND',
-                'ch_cp': 'Chefe de CP',
-                'aguardando_manutencao_date':'Data de aguardando manutenção',
-                'id': 'ID'
-             }
-
     os_names = OrderedDict()
     os_names['id'] = 'ID'
     os_names['prioridade'] = 'Prioridade'
@@ -492,6 +450,10 @@ def os_print(db_dict):
     os_names['ch_cp'] = 'Chefe de CP'
 
     print_dict = OrderedDict()
+
+
+    sistema = Sistema.object.all().values()
+    print(militar)
 
     for key, v in os_names.items():
         if db_dict[key] and key is not 'id':
