@@ -6,6 +6,8 @@ from login.models import Funcao
 from datetime import datetime, timedelta
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 from django.forms.models import model_to_dict
+from django.contrib.auth.models import User
+
 
 TIPO_CHOICES = (
     (0, 'Apoio em conjunto'),
@@ -451,13 +453,16 @@ def os_print(db_dict):
         if db_dict[key] is not None and key is not 'id' and db_dict[key] is not '':
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
-            if key == 'tipo':
+            elif key == 'tipo':
                 if db_dict[key] == 0:
                     value = "Apoio em conjunto"
                 elif db_dict[key] == 1:
                     value = "Apoio direto"
                 else:
                     value = "Apoio em suprimento"
+            # elif key == 'ch_classe' or 'cmt_pel' or  'ch_cp':
+            #     # value = User.objects.get(id=db_dict[key]).username
+            #     value = 'Joao'
             else:
                 value = db_dict[key]
             print_dict[os_names[key]] = value
