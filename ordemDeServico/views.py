@@ -91,7 +91,7 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo) - 1][1]) + " e de classe: " + str(classe)
                     return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
@@ -116,7 +116,7 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo) - 1][1]) + " e de classe: " + str(classe)
                     return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
@@ -141,7 +141,7 @@ def criarordemservico(request, tipo, classe):
 
                     saved_form = instance.save()
                     form.save_m2m()
-                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo) - 1][1]) + " e de classe: " + str(classe)
                     return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
