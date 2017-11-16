@@ -208,8 +208,8 @@ def visualizarOS(request, os_id):
     permissions = getPermissions(request.user)
     ret_os_classe = list(os.values('classe'))[0]['classe']
     status_os = list(os.values('status'))[0]['status']
-    print_value = model_to_dict(os.get())
-    print_value = os_print(print_value)
+    print_status = model_to_dict(os.get())
+    print_value = os_print(print_status)
 
     if request.method == 'POST':
         print(permissions)
@@ -316,25 +316,30 @@ def visualizarOS(request, os_id):
         nome_funcao = {x['nome_funcao'] for x in list(nome_funcao)}
         if os:
 
+            print("DENTRO")
             # sem função
             if nome_funcao and (0 not in nome_funcao or len(nome_funcao)!=1):
                 #CRIAR FORM VAZIO
                 form_consulta = '' #FORM CIENTE
                 submit = '' #HTMLSUBMIT
 
-                ret_os_status = print_value['Status']
+                ret_os_status = print_status['status']
 
-
+                print(ret_os_status)
 
                 # ch cp ou adj cp
                 if (1 in nome_funcao or 2 in nome_funcao):
+                    print("DENTRO")
                     # ch cp
                     if (1 in nome_funcao):
+                        print("CHCP")
                         if(ret_os_status == 1): #AGUARDANDO CIENTE
                             submit = '<button name="status" value="1" type="submit">Ciente</button>'
+                            print("1")
 
                         elif(ret_os_status == 10): #AGUARDANDO CIENTE - FECHAR
                             submit = '<button name="status" value="10" type="submit">Ciente</button>'
+                            print("10")
 
                     return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                 # cmt pel ou ch classe
