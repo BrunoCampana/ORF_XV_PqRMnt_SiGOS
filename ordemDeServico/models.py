@@ -38,7 +38,6 @@ STATUS_CHOICES = (
 )
 
 ND_CHOICES = (
-    (0, 'Não se aplica'),
     (30, 'ND30'),
     (39, 'ND39'),
 )
@@ -87,7 +86,7 @@ class OrdemDeServico(models.Model):
     # atributos
     tipo = models.IntegerField(choices=TIPO_CHOICES)
     status = models.IntegerField(choices=STATUS_CHOICES)
-    nd = models.IntegerField(choices=ND_CHOICES, default=0)
+    nd = models.IntegerField(choices=ND_CHOICES, default=30)
 
     pit = models.BooleanField()
 
