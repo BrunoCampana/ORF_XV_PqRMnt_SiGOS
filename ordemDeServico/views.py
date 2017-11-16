@@ -363,7 +363,7 @@ def consultarOS(request):
         data = {}
     for p in data:
        if p['sistema_id']:
-          j=int(p['sistema_id'])
+          j=int(p['sistema_id']) - 1
           p['sistema_id']=sistema[j]['descricao']
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
