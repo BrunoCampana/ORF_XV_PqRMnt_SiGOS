@@ -180,8 +180,9 @@ def caixadeentrada(request):
                 data = data + list(alldata.filter(classe=p[0], status=9).values())
        
         for p in data:
-          j=int(p['sistema_id'])
-          p['sistema_id']=sistema[j]['descricao']
+          if p['sistema_id']:
+              j=int(p['sistema_id']) - 1
+              p['sistema_id']=sistema[j]['descricao']
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
