@@ -78,7 +78,8 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     instance.abertura_os_date = datetime.now()
-                    instance.nr_os = generateOSNr(tipo, classe)
+                    nr_os_temp = generateOSNr(tipo, classe)
+                    instance.nr_os = nr_os_temp
                     instance.tipo = tipo
                     instance.status = 1
                     instance.classe = classe
@@ -89,7 +90,8 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/falha.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -112,7 +114,8 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -135,7 +138,8 @@ def criarordemservico(request, tipo, classe):
 
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -187,7 +191,6 @@ def caixadeentrada(request):
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
-          print("j: " + str(j) + "Tipo choiches " + TIPO_CHOICES[j][1] + " tipo do bd " + str(p['tipo']))
           p['tipo']=TIPO_CHOICES[j][1]
         data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
@@ -211,7 +214,7 @@ def visualizarOS(request, os_id):
         print(chaves)
         if('medidas_corretivas' in chaves): #TEST NAO
             medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
-            medidas_corretivas = medidas_corretivas_os + request.POST['medidas_corretivas'] + "; "
+            medidas_corretivas = medidas_corretivas_os + request.POST['medidas_corretivas'] + "; " 
             form = MedidasCorretivas({'medidas_corretivas': medidas_corretivas}, instance = os.get())
             if(form.is_valid()):
                 form.save()
@@ -248,6 +251,7 @@ def visualizarOS(request, os_id):
                     if 1 in p:
                         print("STATUS " + str(status_os))
                         incrementarStatus(os, status_os)
+                        return render(request, 'ordemDeServico/ok.html',{"mensagem":"Seu ciente foi registrado"})
                     else:
                         return render(request, "ordemDeServico/semPermissao.html")
                 elif(status_os in [2, 3, 4, 5, 6]):
@@ -380,9 +384,9 @@ def consultarOS(request):
             result_dict = {}
             data_from_form = form.cleaned_data
             for entry in data_from_form.keys():
-                if data_from_form[entry]:
+                if data_from_form[entry] != '' and data_from_form[entry] != None:
                     result_dict[entry] = data_from_form[entry]
-            if result_dict: 
+            if result_dict:
                 data = OrdemDeServico.objects.filter(**result_dict).order_by('status','-abertura_os_date').values()
             else:
                 data = OrdemDeServico.objects.all().order_by('status','-abertura_os_date').values()
@@ -399,10 +403,51 @@ def consultarOS(request):
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
        j=int(p['tipo'])
-       p['tipo']=TIPO_CHOICES[j-1][1]
+       p['tipo']=TIPO_CHOICES[j][1]
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
+    os_names = {'serv_realizado': 'Serviço realizado',
+                'quant_homens': 'Quantidade de homens',
+                'realizacao_date': 'Data de realização',
+                'classe': 'Classe',
+                'remanutencao_date': 'Data de remanutenção',
+                'custo_total': 'Custo total',
+                'medidas_corretivas': 'Medidas corretivas',
+                'quantidade': 'Quantidade',
+                'subsistemas_manutenidos': 'Subsistemas manutenidos',
+                'abertura_os_date': 'Data de abertura',
+                'pit': 'PIT',
+                'ordem_recolhimento': 'Ordem de Recolhimento',
+                'aguardando_inspecao_date': 'Data de aguardando inspeção',
+                'aguardando_ciente_date': 'Data de aguardando ciente',
+                'aguardando_remessa_date': 'Data de aguardando remessa',
+                'desc_material': 'Descrição do material',
+                'tipo': 'Tipo',
+                'em_manutencao_date': 'Data de ínicio de manutenção',
+                'guia_recolhimento': 'Guia de recolhimento',
+                'fechada_arquivar_date': 'Data de fechamento/arquivamento',
+                'testes_em_execucao_date': 'Data de testes em execução',
+                'prestador_servico': 'Prestador de serviço',
+                'om_requerente': 'OM requerente',
+                'fechada_sem_ciente_date': 'Data de fechamento sem ciente',
+                'ch_classe': 'Chefe de classe',
+                'status': 'Status',
+                'sistema': 'Sistema',
+                'cmt_pel': 'Cmt Pel',
+                'nr_os': 'Nr OS',
+                'aguardando_testes_date': 'Data de aguardando testes',
+                'realizando_inspecao_date': 'Data de realizando inspeção',
+                'tempo': 'Tempo (em horas)',
+                'motivo': 'Motivo',
+                'suprimento_aplicado': 'Suprimento aplicado',
+                'prioridade': 'Prioridade',
+                'num_diex': 'Nr DIEX',
+                'nd': 'ND',
+                'ch_cp': 'Chefe de CP',
+                'aguardando_manutencao_date':'Data de aguardando manutenção',
+                'id': 'ID'
+             }
 
     os_names = OrderedDict()
     os_names['id'] = 'ID'
@@ -461,7 +506,9 @@ def os_print(db_dict):
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
-
+            elif key == 'sistema_id':
+               j=int(db_dict['sistema_id'])
+               db_dict['sistema_id']=sistema[j-1]['descricao']
             else:
                 value = db_dict[key]
             print_dict[v] = value
