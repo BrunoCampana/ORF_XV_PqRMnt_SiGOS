@@ -143,7 +143,7 @@ class OrdemServicoConjuntoFinal30(ModelForm):
 
     def __init__(self,*args,**kwargs):
         classe = kwargs.pop('classe')
-        super(OrdemServicoConjuntoFinal39,self).__init__(*args,**kwargs)
+        super(OrdemServicoConjuntoFinal30,self).__init__(*args,**kwargs)
         if classe != 0:
             self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)
 

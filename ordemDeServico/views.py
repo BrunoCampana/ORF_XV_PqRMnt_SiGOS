@@ -197,6 +197,8 @@ def visualizarOS(request, os_id):
     os = getOSfromId(os_id)
     permissions = getPermissions(request.user)
     print_value = list(os.values())[0]
+    ret_os_classe = list(os.values('classe'))[0]['classe']
+    status_os = list(os.values('status'))[0]['status']
 
     if request.method == 'POST':
         print(permissions)
@@ -204,12 +206,35 @@ def visualizarOS(request, os_id):
         #TODO TRATAR RECEBIMENTO DOS FORMS
         chaves = request.POST.keys()
         print(chaves)
-        if('medidas_corretivas' in chaves):
-            print(request.POST['medidas_corretivas'])
+        if('medidas_corretivas' in chaves): #TEST NAO
+            medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
+            medidas_corretivas = medidas_corretivas_os + ' ' + request.POST['medidas_corretivas']
+            form = MedidasCorretivas({'medidas_corretivas': medidas_corretivas}, instance = os.get())
+            if(form.is_valid()):
+                form.save()
+                if(status_os == 7):
+                    incrementarStatus(os, 7)
+                return redirect("/ordemservico/todo")
+            else:
+                return redirect("/")
+        elif('quant_homens' in chaves): #ND30
+            form = OrdemServicoConjuntoFinal30(request.POST, instance = os.get(), classe=ret_os_classe)
+            if(form.is_Valid()):
+                form.save()
+                incrementarStatus(os, 8)
+                return redirect("/ordemservico/todo")
+            else:
+                return redirect("/")
+        elif('prestador_servico' in chaves): #ND39
+            form = OrdemServicoConjuntoFinal39(request.POST, instance = os.get(), classe=ret_os_classe)
+            if(form.is_valid()):
+                form.save()
+                incrementarStatus(os, 8)
+                return redirect("/ordemservico/todo")
+            else:
+                return redirect("/")
         else:
             if os:
-                status_os = list(os.values('status'))[0]['status']
-                ret_os_classe = list(os.values('classe'))[0]['classe']
 
                 if(status_os in [1, 10]):
                     #CHCP
@@ -234,13 +259,13 @@ def visualizarOS(request, os_id):
                         if(sucesso == 'sim'): #SIM 
                             nd_os = list(os.values('nd'))[0]['nd']
                             if(nd_os == 30):
-                                form = OrdemServicoConjuntoFinal30(classe=ret_os_classe)
+                                form_consulta = OrdemServicoConjuntoFinal30(classe=ret_os_classe)
                             else:
-                                form = OrdemServicoConjuntoFinal39(classe_ret_os_classe)
+                                form_consulta = OrdemServicoConjuntoFinal39(classe=ret_os_classe)
+                            submit = '<button name="status" value="' + str(status_os) + '" type="submit">Salvar</button>'
                             return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                             print("SIM")
                             #RENDER NEW FORM
-                            #incrementarStatus(os, 8)
                         else:
                             print("NAO")
                             #RENDER NEW FORM
