@@ -280,8 +280,18 @@ def visualizarOS(request, os_id):
 def consultarOS(request):
     if request.method == 'POST':
         form = ConsultaOrdemServico(request.POST)
-        form.is_valid()
-        data = OrdemDeServico.objects.filter(**form.cleaned_data).order_by('status','-abertura_os_date').values()
+        if form.is_valid():
+            result_dict = {}
+            data_from_form = form.cleaned_data
+            for entry in data_from_form.keys():
+                if data_from_form[entry]:
+                    result_dict[entry] = data_from_form[entry]
+            if result_dict: 
+                data = OrdemDeServico.objects.filter(**result_dict).order_by('status','-abertura_os_date').values()
+            else:
+                data = OrdemDeServico.objects.all().order_by('status','-abertura_os_date').values()
+        else:
+            pass
     
     else:
         form = ConsultaOrdemServico()

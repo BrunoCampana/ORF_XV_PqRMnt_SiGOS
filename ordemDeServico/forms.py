@@ -98,3 +98,9 @@ class ConsultaOrdemServico(ModelForm):
         'classe',
         'status',
         'om_requerente']
+
+    def __init__(self, *args, **kwargs):
+        super(ConsultaOrdemServico, self).__init__(*args, **kwargs)
+        self.fields['classe'].required = False
+        self.fields['status'].required = False
+        self.fields['om_requerente'].required = False
