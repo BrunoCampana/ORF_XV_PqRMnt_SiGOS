@@ -113,6 +113,12 @@ class ConsultaOrdemServico(ModelForm):
         self.fields['status'].required = False
         self.fields['om_requerente'].required = False
 
+class MedidasCorretivas(ModelForm):
+    class Meta:
+        model = OrdemDeServico
+
+        fields = ['medidas_corretivas']
+
 class OrdemServicoConjuntoFinal30(ModelForm):
     class Meta:
         model = OrdemDeServico
@@ -168,8 +174,3 @@ class OrdemServicoConjuntoFinal39(ModelForm):
         if classe != 0:
             self.fields['subsistemas_manutenidos'].queryset = Subsistemas.objects.filter(classe=classe)
 
-#class ConsultaOrdemServico(ModelForm):
-#    class Meta:
-#        model = OrdemDeServico
-#
-#        fields = ['falha']
