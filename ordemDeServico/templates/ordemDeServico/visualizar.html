@@ -33,10 +33,23 @@
 {% endblock%}
 
 {% block list %}
-    <form method="post">
+    <form class=form-horizontal method="post">
         {% csrf_token %}
-        {{ pre_form_message|safe }}
-        {{ form_consulta }}
-        {{ submit|safe}}
+        <div class="box-header">
+            {{ pre_form_message|safe }}
+        </div>
+
+        <div class="box-body">
+            {% for item in form_consulta %}
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label"> {{ item.label }} </label>
+                    {{ item }}
+                </div>
+            {% endfor %}
+
+        </div>
+        <div class="box-footer">
+            {{ submit | safe}}
+        </div>
     </form>
 {% endblock %}
