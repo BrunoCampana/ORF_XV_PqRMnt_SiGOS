@@ -3,7 +3,7 @@ from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas, OrdemServicoConjuntoFinal30, OrdemServicoConjuntoFinal39
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
-from datetime import datetime, timedelta
+from datetime import datetime
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 from django.forms.models import model_to_dict
 
@@ -74,7 +74,7 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     #TODO preencher
-                    instance.abertura_os_date = datetime.now() - timedelta(hours=4)
+                    instance.abertura_os_date = datetime.now()
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
                     instance.status = 1
@@ -98,7 +98,7 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     #TODO preencher
-                    instance.abertura_os_date = datetime.now() - timedelta(hours=4)
+                    instance.abertura_os_date = datetime.now()
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
                     instance.status = 10
@@ -122,7 +122,7 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     #TODO preencher
-                    instance.abertura_os_date = datetime.now() - timedelta(hours=4)
+                    instance.abertura_os_date = datetime.now()
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
                     instance.status = 10
