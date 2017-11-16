@@ -456,7 +456,8 @@ def os_print(db_dict):
                 else:
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
-                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + User.objects.get(id=db_dict[key]).first_name
+               value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
+
 
             else:
                 value = db_dict[key]
