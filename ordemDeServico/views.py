@@ -73,7 +73,6 @@ def criarordemservico(request, tipo, classe):
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
-                    #TODO preencher
                     instance.abertura_os_date = datetime.now() - timedelta(hours=4)
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
@@ -86,10 +85,10 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    #TODO redirect pra página de adicionado corretamente
+                    return render(request, 'ordemDeServico/ok.html')
                 else:
                     #TODO redirect pra página de falha em adicionar
-                    #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
+                    #return render(request, 'ordemDeServico/falha.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
                     pass
 
             elif int(tipo) == 1: #Apoio Direto
@@ -97,7 +96,6 @@ def criarordemservico(request, tipo, classe):
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
-                    #TODO preencher
                     instance.abertura_os_date = datetime.now() - timedelta(hours=4)
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
@@ -110,7 +108,7 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    #TODO redirect pra página de adicionado corretamente
+                    return render(request, 'ordemDeServico/ok.html')
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -121,7 +119,6 @@ def criarordemservico(request, tipo, classe):
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
-                    #TODO preencher
                     instance.abertura_os_date = datetime.now() - timedelta(hours=4)
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
@@ -134,7 +131,7 @@ def criarordemservico(request, tipo, classe):
 
                     saved_form = instance.save()
                     form.save_m2m()
-                    #TODO redirect pra página de adicionado corretamente
+                    return render(request, 'ordemDeServico/ok.html')
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -205,7 +202,6 @@ def visualizarOS(request, os_id):
     if request.method == 'POST':
         print(permissions)
         print(request.POST)
-        #TODO TRATAR RECEBIMENTO DOS FORMS
         chaves = request.POST.keys()
         print(chaves)
         if('medidas_corretivas' in chaves): #TEST NAO
@@ -216,24 +212,27 @@ def visualizarOS(request, os_id):
                 form.save()
                 if(status_os == 7):
                     incrementarStatus(os, 7)
-                return redirect("/ordemservico/todo")
+                return render(request, 'ordemDeServico/ok.html')
             else:
+                #TODO mudar página de redirecionamento qnd der erro
                 return redirect("/")
         elif('quant_homens' in chaves): #ND30
             form = OrdemServicoConjuntoFinal30(request.POST, instance = os.get(), classe=ret_os_classe)
             if(form.is_valid()):
                 form.save()
                 incrementarStatus(os, 8)
-                return redirect("/ordemservico/todo")
+                return render(request, 'ordemDeServico/ok.html')
             else:
+                #TODO mudar página de redirecionamento qnd der erro
                 return redirect("/")
         elif('prestador_servico' in chaves): #ND39
             form = OrdemServicoConjuntoFinal39(request.POST, instance = os.get(), classe=ret_os_classe)
             if(form.is_valid()):
                 form.save()
                 incrementarStatus(os, 8)
-                return redirect("/ordemservico/todo")
+                return render(request, 'ordemDeServico/ok.html')
             else:
+                #TODO mudar página de redirecionamento qnd der erro
                 return redirect("/")
         else:
             if os:
@@ -267,10 +266,8 @@ def visualizarOS(request, os_id):
                             submit = '<button name="status" value="' + str(status_os) + '" type="submit">Salvar</button>'
                             return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                             print("SIM")
-                            #RENDER NEW FORM
                         else:
                             print("NAO")
-                            #RENDER NEW FORM
                             medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
                             pre_message = "Medidas corretivas já aplicadas:<br>" + medidas_corretivas_os + "<br>"
                             form_consulta = MedidasCorretivas() #FORM CIENTE
@@ -294,7 +291,7 @@ def visualizarOS(request, os_id):
                 else:
                     return render(request, "ordemDeServico/semPermissao.html")
 
-            return redirect("/ordemservico/todo")
+            return render(request, 'ordemDeServico/ok.html')
     else:
         funcao = getFuncaoMilitar(request.user)
         classe = funcao.values('classe')
@@ -400,9 +397,6 @@ def consultarOS(request):
        p['tipo']=TIPO_CHOICES[j-1][1]
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
-def todo(request):
-    return render(request, 'ordemDeServico/todo.html')
-
 def os_print(db_dict):
     os_names = {'serv_realizado': 'Serviço realizado',
                 'quant_homens': 'Quantidade de homens',
@@ -463,4 +457,7 @@ def os_print(db_dict):
             print_dict[os_names[key]] = value
 
     return print_dict
+
+def todo(request):
+    return render(request, 'ordemDeServico/todo.html')
 
