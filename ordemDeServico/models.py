@@ -42,6 +42,18 @@ ND_CHOICES = (
     (39, 'ND39'),
 )
 
+STATUS_DATE = {
+    1:"aguardando_inspecao_date",
+    2:"realizando_inspecao_date",
+    3:"aguardando_manutencao_date",
+    4:"em_manutencao_date",
+    5:"aguardando_testes_date",
+    6:"testes_em_execucao_date",
+    7:"remanutencao_date",
+    8:"aguardando_remessa_date",
+    9:"fechada_sem_ciente_date",
+    10:"fechada_arquivar_date"
+}
 
 # Create your models here.
 class Sistema(models.Model):

@@ -209,7 +209,7 @@ def visualizarOS(request, os_id):
         print(chaves)
         if('medidas_corretivas' in chaves): #TEST NAO
             medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
-            medidas_corretivas = medidas_corretivas_os + ';' + request.POST['medidas_corretivas']
+            medidas_corretivas = medidas_corretivas_os + request.POST['medidas_corretivas'] + "; " 
             form = MedidasCorretivas({'medidas_corretivas': medidas_corretivas}, instance = os.get())
             if(form.is_valid()):
                 form.save()
