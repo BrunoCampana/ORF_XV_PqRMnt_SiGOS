@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
+from  login.models import InformacaoMilitar
 
 
 TIPO_CHOICES = (
@@ -460,9 +461,9 @@ def os_print(db_dict):
                     value = "Apoio direto"
                 else:
                     value = "Apoio em suprimento"
-            # elif key == 'ch_classe' or 'cmt_pel' or  'ch_cp':
-            #     # value = User.objects.get(id=db_dict[key]).username
-            #     value = 'Joao'
+            elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
+                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + User.objects.get(id=db_dict[key]).first_name
+
             else:
                 value = db_dict[key]
             print_dict[os_names[key]] = value
