@@ -188,7 +188,7 @@ def caixadeentrada(request):
           j=int(p['tipo'])
           print("j: " + str(j) + "Tipo choiches " + TIPO_CHOICES[j][1] + " tipo do bd " + str(p['tipo']))
           p['tipo']=TIPO_CHOICES[j][1]
-        #data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
