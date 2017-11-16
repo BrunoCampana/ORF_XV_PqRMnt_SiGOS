@@ -105,8 +105,8 @@ class ConsultaOrdemServico(ModelForm):
         self.fields['status'].required = False
         self.fields['om_requerente'].required = False
 
-#class ConsultaOrdemServico(ModelForm):
-#    class Meta:
-#        model = OrdemDeServico
-#
-#        fields = ['falha']
+class MedidasCorretivas(ModelForm):
+    class Meta:
+        model = OrdemDeServico
+
+        fields = ['medidas_corretivas']
