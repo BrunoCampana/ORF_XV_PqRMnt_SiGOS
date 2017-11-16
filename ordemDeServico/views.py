@@ -4,7 +4,7 @@ from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprime
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
-from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required
+from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 
 TIPO_CHOICES = (
     (0, 'Apoio em conjunto'),
@@ -194,25 +194,81 @@ def caixadeentrada(request):
 
 @meu_login_required
 def visualizarOS(request, os_id):
+    os = getOSfromId(os_id)
+    permissions = getPermissions(request.user)
+
     if request.method == 'POST':
+        print(permissions)
+        print(request.POST)
         #TODO TRATAR RECEBIMENTO DOS FORMS
+        chaves = request.POST.keys()
+        if os:
+            status_os = list(os.values('status'))[0]['status']
+            ret_os_classe = list(os.values('classe'))[0]['classe']
+
+            if(status_os in [1, 10]):
+                #CHCP
+                p = [x[1] for x in permissions]
+                if 1 in p:
+                    print("STATUS " + str(status_os))
+                    incrementarStatus(os, status_os)
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+            if(status_os in [2, 3, 4, 5, 6]):
+                #CMT PEL
+                if [ret_os_classe, 3] in permissions:
+                    print("STATUS " + str(status_os))
+                    incrementarStatus(os, status_os)
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+            elif(status_os in [7, 8]):
+                #CMT PEL
+                if [ret_os_classe, 3] in permissions:
+                    sucesso = request.POST.get('testesucesso')
+                    print(sucesso)
+                    if(sucesso == 'sim'): #SIM 
+                        print("SIM")
+                        #RENDER NEW FORM
+                        #incrementarStatus(os, 8)
+                    else:
+                        print("NAO")
+                        #RENDER NEW FORM
+                        #if(status_os == 7):
+                        #    incrementarStatus(os, 7)
+                    print("STATUS " + str(status_os))
+     
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+
+            elif(status_os in [9]):
+                #CHCL
+                if [ret_os_classe, 4] in permissions:
+                    incrementarStatus(os, 9)
+                else:
+                    return render(request, "ordemDeServico/semPermissao.html")
+                print("STATUS " + str(status_os))
+            
+            else:
+                return render(request, "ordemDeServico/semPermissao.html")
+                        
         return redirect("/ordemservico/todo")
     else:
         funcao = getFuncaoMilitar(request.user)
         classe = funcao.values('classe')
         nome_funcao= funcao.values('nome_funcao')
 
-        permissions = [[x['classe'], y['nome_funcao']] for (x, y) in list(zip(list(classe), list(nome_funcao)))]
-
         print(permissions)
 
         classe = {x['classe'] for x in list(classe)}
         nome_funcao = {x['nome_funcao'] for x in list(nome_funcao)}
-        os = getOSfromId(os_id)
         if os:
 
             # sem função
             if nome_funcao and (0 not in nome_funcao or len(nome_funcao)!=1):
+                #CRIAR FORM VAZIO
+                form_consulta = '' #FORM CIENTE
+                submit = '' #HTMLSUBMIT
+
                 print_value = list(os.values())[0]
                 ret_os_status = list(os.values('status'))[0]['status']
 
@@ -221,23 +277,10 @@ def visualizarOS(request, os_id):
                     # ch cp
                     if (1 in nome_funcao):
                         if(ret_os_status == 1): #AGUARDANDO CIENTE
-                            form_consulta = '' # FORMAGCIENTE
-                            submit = '<button name="status" value="1" type="submit">Enviar</button>'
+                            submit = '<button name="status" value="1" type="submit">Ciente</button>'
 
                         elif(ret_os_status == 10): #AGUARDANDO CIENTE - FECHAR
-                            form_consulta = '' #FORMAGCIENTE
-                            submit = '<button name="status" value="10" type="submit">Enviar</button>'
-
-                        else:
-                            #CRIAR FORM VAZIO
-                            form_consulta = '' #FORMAGCIENTE
-                            submit = '' #HTMLSUBMIT
-
-                    # adj cp
-                    else:
-                        #CRIAR FORM VAZIO
-                        form_consulta = '' #FORMAGCIENTE
-                        submit = '' #HTMLSUBMIT
+                            submit = '<button name="status" value="10" type="submit">Ciente</button>'
 
                     return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
                 # cmt pel ou ch classe
@@ -250,58 +293,35 @@ def visualizarOS(request, os_id):
                         if ([ret_os_classe, 3] in permissions):
                             print("CMT PEL")
                             if(ret_os_status == 2): #AGUARDANDO INSPEÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="2" type="submit">Enviar</button>'
+                                submit = '<button name="status" value="2" type="submit">Iniciar inspeção</button>'
 
                             elif(ret_os_status == 3): #REALIZANDO INSPEÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="3" type="submit">Enviar</button>'
+                                submit = '<button name="status" value="3" type="submit">Finalizar inspeção</button>'
 
                             elif(ret_os_status == 4): #AGUARDANDO MANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="4" type="submit">Enviar</button>'
+                                submit = '<button name="status" value="4" type="submit">Iniciar manutenção</button>'
 
                             elif(ret_os_status == 5): #EM MANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="5" type="submit">Enviar</button>'
+                                submit = '<button name="status" value="5" type="submit">Finalizar manutenção</button>'
 
                             elif(ret_os_status == 6): #AGUARDANDO TESTES
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="6" type="submit">Enviar</button>'
+                                submit = '<button name="status" value="6" type="submit">Iniciar testes</button>'
 
                             elif(ret_os_status == 7): #TESTES EM EXECUÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="7" type="submit">Enviar</button>'
+                                submit = '<p>Passou no teste?</p><br><button name="testesucesso" value="sim" type="submit">Sim</button><button name="testesucesso" value="nao" type="submit">Não</button>'
 
                             elif(ret_os_status == 8): #REMANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '<button name="status" value="8" type="submit">Enviar</button>'
-
-                            else:
-                                #CRIAR FORM VAZIO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '' #HTMLSUBMIT
-
+                                form_consulta = '' #FORM CIENTE
+                                submit = '<p>Passou no teste?</p><br><button name="testesucesso" value="sim" type="submit">Sim</button><button name="testesucesso" value="nao" type="submit">Não</button>'
 
                         # ch classe
                         elif ([ret_os_classe, 4] in permissions):
                             print("CH CL")
                             if(ret_os_status == 9): #REMANUTENÇÃO
-                                form_consulta = '' #FORMAGCIENTE
+                                form_consulta = '' #FORM CIENTE
                                 submit = '<button name="status" value="9" type="submit">Enviar</button>'
 
-                            else:
-                                #CRIAR FORM VAZIO
-                                form_consulta = '' #FORMAGCIENTE
-                                submit = '' #HTMLSUBMIT
-                        else:
-                            #CRIAR FORM VAZIO
-                            form_consulta = '' #FORMAGCIENTE
-                            submit = '' #HTMLSUBMIT
-
-
                         return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
-
 
         return redirect("/ordemservico/todo")
 
@@ -309,8 +329,18 @@ def visualizarOS(request, os_id):
 def consultarOS(request):
     if request.method == 'POST':
         form = ConsultaOrdemServico(request.POST)
-        form.is_valid()
-        data = OrdemDeServico.objects.filter(**form.cleaned_data).order_by('status','-abertura_os_date').values()
+        if form.is_valid():
+            result_dict = {}
+            data_from_form = form.cleaned_data
+            for entry in data_from_form.keys():
+                if data_from_form[entry]:
+                    result_dict[entry] = data_from_form[entry]
+            if result_dict: 
+                data = OrdemDeServico.objects.filter(**result_dict).order_by('status','-abertura_os_date').values()
+            else:
+                data = OrdemDeServico.objects.all().order_by('status','-abertura_os_date').values()
+        else:
+            pass
     
     else:
         form = ConsultaOrdemServico()
