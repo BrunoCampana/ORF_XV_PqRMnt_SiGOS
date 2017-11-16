@@ -210,7 +210,7 @@ def visualizarOS(request, os_id):
         print(chaves)
         if('medidas_corretivas' in chaves): #TEST NAO
             medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
-            medidas_corretivas = medidas_corretivas_os + ' ' + request.POST['medidas_corretivas']
+            medidas_corretivas = medidas_corretivas_os + ';' + request.POST['medidas_corretivas']
             form = MedidasCorretivas({'medidas_corretivas': medidas_corretivas}, instance = os.get())
             if(form.is_valid()):
                 form.save()
@@ -221,7 +221,7 @@ def visualizarOS(request, os_id):
                 return redirect("/")
         elif('quant_homens' in chaves): #ND30
             form = OrdemServicoConjuntoFinal30(request.POST, instance = os.get(), classe=ret_os_classe)
-            if(form.is_Valid()):
+            if(form.is_valid()):
                 form.save()
                 incrementarStatus(os, 8)
                 return redirect("/ordemservico/todo")
@@ -246,7 +246,7 @@ def visualizarOS(request, os_id):
                         incrementarStatus(os, status_os)
                     else:
                         return render(request, "ordemDeServico/semPermissao.html")
-                if(status_os in [2, 3, 4, 5, 6]):
+                elif(status_os in [2, 3, 4, 5, 6]):
                     #CMT PEL
                     if [ret_os_classe, 3] in permissions:
                         print("STATUS " + str(status_os))
