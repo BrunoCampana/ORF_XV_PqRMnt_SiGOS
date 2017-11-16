@@ -185,7 +185,7 @@ def caixadeentrada(request):
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
           p['tipo']=TIPO_CHOICES[j-1][1]
-#        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
@@ -327,6 +327,7 @@ def visualizarOS(request, os_id):
 
 @meu_login_required
 def consultarOS(request):
+    sistema = Sistema.objects.all().values()
     if request.method == 'POST':
         form = ConsultaOrdemServico(request.POST)
         if form.is_valid():
@@ -345,7 +346,13 @@ def consultarOS(request):
     else:
         form = ConsultaOrdemServico()
         data = {}
-    
+    for p in data:
+       j=int(p['sistema_id'])
+       p['sistema_id']=sistema[j]['descricao']
+       j=int(p['status'])
+       p['status']=STATUS_CHOICES[j-1][1]
+       j=int(p['tipo'])
+       p['tipo']=TIPO_CHOICES[j-1][1]
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def todo(request):
