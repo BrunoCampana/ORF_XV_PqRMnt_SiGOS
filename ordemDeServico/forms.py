@@ -87,7 +87,9 @@ class OrdemServicoConjunto(ModelForm):
         'pit',
         'nd',
         'motivo',
-        'desc_material']
+        'desc_material',
+        'sistema',
+        'quantidade']
 
 class ConsultaOrdemServico(ModelForm):
     class Meta:
