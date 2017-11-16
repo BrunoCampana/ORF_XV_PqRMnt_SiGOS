@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas, OrdemServicoConjuntoFinal30, OrdemServicoConjuntoFinal39
-from .models import Sistema, OrdemDeServico
+from .models import Sistema, OrdemDeServico, OM
 from login.models import Funcao
 from datetime import datetime
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
@@ -444,8 +444,9 @@ def os_print(db_dict):
              }
 
     print_dict = {}
-    sistema = Sistema.object.all().values()
-    print (militar)
+    sistema = Sistema.objects.all().values()
+    om = OM.objects.all().values()
+    print(db_dict)
     for key in db_dict:
         if db_dict[key] and key is not 'id':
             if key == 'pit':
@@ -459,9 +460,12 @@ def os_print(db_dict):
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
-            elif key == 'sistema_id':
-               j=int(db_dict['sistema_id'])
-               db_dict['sistema_id']=sistema[j-1]['descricao']
+            elif key == 'sistema':
+               j=int(db_dict['sistema'])
+               value = sistema[j-1]['descricao']
+            elif key =='om_requerente':
+               j=int(db_dict['om_requerente'])
+               value = om[j-1]['nome']
             else:
                 value = db_dict[key]
             print_dict[os_names[key]] = value
