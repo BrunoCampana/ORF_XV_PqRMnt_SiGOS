@@ -3,9 +3,12 @@ from django.db.models import Q
 from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas, OrdemServicoConjuntoFinal30, OrdemServicoConjuntoFinal39
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
-from datetime import datetime, timedelta
+from datetime import datetime
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 from django.forms.models import model_to_dict
+from django.contrib.auth.models import User
+from  login.models import InformacaoMilitar
+
 
 TIPO_CHOICES = (
     (0, 'Apoio em conjunto'),
@@ -73,7 +76,7 @@ def criarordemservico(request, tipo, classe):
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
-                    instance.abertura_os_date = datetime.now() - timedelta(hours=4)
+                    instance.abertura_os_date = datetime.now()
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
                     instance.status = 1
@@ -96,7 +99,7 @@ def criarordemservico(request, tipo, classe):
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
-                    instance.abertura_os_date = datetime.now() - timedelta(hours=4)
+                    instance.abertura_os_date = datetime.now()
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
                     instance.status = 10
@@ -119,7 +122,7 @@ def criarordemservico(request, tipo, classe):
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
-                    instance.abertura_os_date = datetime.now() - timedelta(hours=4)
+                    instance.abertura_os_date = datetime.now()
                     instance.nr_os = generateOSNr(tipo, classe)
                     instance.tipo = tipo
                     instance.status = 10
@@ -184,7 +187,7 @@ def caixadeentrada(request):
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
           p['tipo']=TIPO_CHOICES[j-1][1]
-        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+        #data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
@@ -442,16 +445,19 @@ def os_print(db_dict):
 
     print_dict = {}
     for key in db_dict:
-        if db_dict[key] is not None and key is not 'id' and db_dict[key] is not '':
+        if db_dict[key] and key is not 'id':
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
-            if key == 'tipo':
+            elif key == 'tipo':
                 if db_dict[key] == 0:
                     value = "Apoio em conjunto"
                 elif db_dict[key] == 1:
                     value = "Apoio direto"
                 else:
                     value = "Apoio em suprimento"
+            elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
+                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + User.objects.get(id=db_dict[key]).first_name
+
             else:
                 value = db_dict[key]
             print_dict[os_names[key]] = value
