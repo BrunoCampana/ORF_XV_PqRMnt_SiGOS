@@ -6,6 +6,8 @@ from login.models import Funcao
 from datetime import datetime
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 from django.forms.models import model_to_dict
+from django.contrib.auth.models import User
+
 
 TIPO_CHOICES = (
     (0, 'Apoio em conjunto'),
@@ -187,7 +189,7 @@ def caixadeentrada(request):
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
           p['tipo']=TIPO_CHOICES[j-1][1]
-        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+        #data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
@@ -448,16 +450,19 @@ def os_print(db_dict):
 
     print_dict = {}
     for key in db_dict:
-        if db_dict[key] is not None and key is not 'id' and db_dict[key] is not '':
+        if db_dict[key] and key is not 'id':
             if key == 'pit':
                 value = "Sim" if db_dict[key] == True else "Não"
-            if key == 'tipo':
+            elif key == 'tipo':
                 if db_dict[key] == 0:
                     value = "Apoio em conjunto"
                 elif db_dict[key] == 1:
                     value = "Apoio direto"
                 else:
                     value = "Apoio em suprimento"
+            # elif key == 'ch_classe' or 'cmt_pel' or  'ch_cp':
+            #     # value = User.objects.get(id=db_dict[key]).username
+            #     value = 'Joao'
             else:
                 value = db_dict[key]
             print_dict[os_names[key]] = value
