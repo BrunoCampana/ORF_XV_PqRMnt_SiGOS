@@ -107,7 +107,8 @@ class ConsultaOrdemServico(ModelForm):
         'status',
         'om_requerente',
         'nr_os',
-        'tipo',]
+        'tipo',
+        'sistema']
 
     def __init__(self, *args, **kwargs):
         super(ConsultaOrdemServico, self).__init__(*args, **kwargs)
@@ -116,6 +117,7 @@ class ConsultaOrdemServico(ModelForm):
         self.fields['om_requerente'].required = False
         self.fields['tipo'].required = False
         self.fields['nr_os'].required = False
+        self.fields['sistema'].required = False
 
 class MedidasCorretivas(ModelForm):
     class Meta:
