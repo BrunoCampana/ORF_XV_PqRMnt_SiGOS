@@ -77,7 +77,8 @@ def criarordemservico(request, tipo, classe):
                     instance = form.save(commit=False)
                     
                     instance.abertura_os_date = datetime.now()
-                    instance.nr_os = generateOSNr(tipo, classe)
+                    nr_os_temp = generateOSNr(tipo, classe)
+                    instance.nr_os = nr_os_temp
                     instance.tipo = tipo
                     instance.status = 1
                     instance.classe = classe
@@ -88,7 +89,8 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/falha.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -111,7 +113,8 @@ def criarordemservico(request, tipo, classe):
                     
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -134,7 +137,8 @@ def criarordemservico(request, tipo, classe):
 
                     saved_form = instance.save()
                     form.save_m2m()
-                    return render(request, 'ordemDeServico/ok.html')
+                    str_success = "OS nr: " + str(nr_os_temp) + ", de tipo: " + str(TIPO_CHOICES[int(tipo)][1]) + " e de classe: " + str(classe)
+                    return render(request, 'ordemDeServico/ok.html', {'mensagem':str_success})
                 else:
                     #TODO redirect pra página de falha em adicionar
                     #return render(request, 'ordemDeServico/form.html', {'form': form, 'submitValue': 'Salvar', 'classe':classe})
@@ -247,6 +251,7 @@ def visualizarOS(request, os_id):
                     if 1 in p:
                         print("STATUS " + str(status_os))
                         incrementarStatus(os, status_os)
+                        return render(request, 'ordemDeServico/ok.html',{"mensagem":"Seu ciente foi registrado"})
                     else:
                         return render(request, "ordemDeServico/semPermissao.html")
                 elif(status_os in [2, 3, 4, 5, 6]):
@@ -379,9 +384,9 @@ def consultarOS(request):
             result_dict = {}
             data_from_form = form.cleaned_data
             for entry in data_from_form.keys():
-                if data_from_form[entry]:
+                if data_from_form[entry] != '' and data_from_form[entry] != None:
                     result_dict[entry] = data_from_form[entry]
-            if result_dict: 
+            if result_dict:
                 data = OrdemDeServico.objects.filter(**result_dict).order_by('status','-abertura_os_date').values()
             else:
                 data = OrdemDeServico.objects.all().order_by('status','-abertura_os_date').values()
