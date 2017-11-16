@@ -209,6 +209,7 @@ def visualizarOS(request, os_id):
     ret_os_classe = list(os.values('classe'))[0]['classe']
     status_os = list(os.values('status'))[0]['status']
     print_value = model_to_dict(os.get())
+    print_value = os_print(print_value)
 
     if request.method == 'POST':
         print(permissions)
@@ -321,8 +322,8 @@ def visualizarOS(request, os_id):
                 form_consulta = '' #FORM CIENTE
                 submit = '' #HTMLSUBMIT
 
-                ret_os_status = print_value['status']
-                print_value = os_print(print_value)
+                ret_os_status = print_value['Status']
+
 
 
                 # ch cp ou adj cp
