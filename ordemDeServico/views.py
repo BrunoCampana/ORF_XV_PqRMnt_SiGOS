@@ -4,7 +4,7 @@ from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprime
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
-from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions, os_form
+from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
 from django.forms.models import model_to_dict
 
 TIPO_CHOICES = (
@@ -200,6 +200,7 @@ def visualizarOS(request, os_id):
     permissions = getPermissions(request.user)
     ret_os_classe = list(os.values('classe'))[0]['classe']
     status_os = list(os.values('status'))[0]['status']
+    os = os.get()
     print_value = model_to_dict(os)
 
     if request.method == 'POST':
@@ -313,7 +314,7 @@ def visualizarOS(request, os_id):
                 submit = '' #HTMLSUBMIT
 
                 ret_os_status = print_value['status']
-                print_value = os_form(print_value)
+                print_value = os_print(print_value)
 
 
                 # ch cp ou adj cp
@@ -402,3 +403,65 @@ def consultarOS(request):
 
 def todo(request):
     return render(request, 'ordemDeServico/todo.html')
+
+def os_print(db_dict):
+    os_names = {'serv_realizado': 'Serviço realizado',
+                'quant_homens': 'Quantidade de homens',
+                'realizacao_date': 'Data de realização',
+                'classe': 'Classe',
+                'remanutencao_date': 'Data de remanutenção',
+                'custo_total': 'Custo total',
+                'medidas_corretivas': 'Medidas corretivas',
+                'quantidade': 'Quantidade',
+                'subsistemas_manutenidos': 'Subsistemas manutenidos',
+                'abertura_os_date': 'Data de abertura',
+                'pit': 'PIT',
+                'ordem_recolhimento': 'Ordem de Recolhimento',
+                'aguardando_inspecao_date': 'Data de aguardando inspeção',
+                'aguardando_ciente_date': 'Data de aguardando ciente',
+                'aguardando_remessa_date': 'Data de aguardando remessa',
+                'desc_material': 'Descrição do material',
+                'tipo': 'Tipo',
+                'em_manutencao_date': 'Data de ínicio de manutenção',
+                'guia_recolhimento': 'Guia de recolhimento',
+                'fechada_arquivar_date': 'Data de fechamento/arquivamento',
+                'testes_em_execucao_date': 'Data de testes em execução',
+                'prestador_servico': 'Prestador de serviço',
+                'om_requerente': 'OM requerente',
+                'fechada_sem_ciente_date': 'Data de fechamento sem ciente',
+                'ch_classe': 'Chefe de classe',
+                'status': 'Status',
+                'sistema': 'Sistema',
+                'cmt_pel': 'Cmt Pel',
+                'nr_os': 'Nr OS',
+                'aguardando_testes_date': 'Data de aguardando testes',
+                'realizando_inspecao_date': 'Data de realizando inspeção',
+                'tempo': 'tempo',
+                'motivo': 'Motivo',
+                'suprimento_aplicado': 'Suprimento aplicado',
+                'prioridade': 'Prioridade',
+                'num_diex': 'Nr DIEX',
+                'nd': 'ND',
+                'ch_cp': 'Chefe de CP',
+                'aguardando_manutencao_date':'Data de aguardando manutenção',
+                'id': 'ID'
+             }
+
+    print_dict = {}
+    for key in db_dict:
+        if db_dict[key] is not None and key is not 'id' and db_dict[key] is not '':
+            if key == 'pit':
+                value = "Sim" if db_dict[key] == True else "Não"
+            if key == 'tipo':
+                if db_dict[key] == 0:
+                    value = "Apoio em conjunto"
+                elif db_dict[key] == 1:
+                    value = "Apoio direto"
+                else:
+                    value = "Apoio em suprimento"
+            else:
+                value = db_dict[key]
+            print_dict[os_names[key]] = value
+
+    return print_dict
+
