@@ -17,18 +17,20 @@ NOME_FUNCAO_CHOICES = (
 
 class InformacaoMilitar(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
+    nome_guerra = models.CharField(max_length=10)
     posto = models.CharField(max_length=10)
     om = models.CharField(max_length=50)
 
-    REQUIRED_FIELDS = ['posto', 'om']
+    REQUIRED_FIELDS = ['posto', 'om', 'nome_guerra']
 
 
 def inserir_infoMil(sender, **kwargs):
     user = kwargs["instance"]
 
+    print(user)
     if kwargs["created"]:
         ### MUDAR ABAIXO PARA VALORES RECEBIDOS. PESQUISAR ###
-        infoMil = InformacaoMilitar(user=user, posto='1ten', om='IME')
+        infoMil = InformacaoMilitar(user=user)
         infoMil.save()
 
 
