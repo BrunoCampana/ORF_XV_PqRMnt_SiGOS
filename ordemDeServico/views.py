@@ -4,7 +4,8 @@ from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprime
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
-from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions
+from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required, incrementarStatus, getPermissions, os_form
+from django.forms.models import model_to_dict
 
 TIPO_CHOICES = (
     (0, 'Apoio em conjunto'),
@@ -269,8 +270,10 @@ def visualizarOS(request, os_id):
                 form_consulta = '' #FORM CIENTE
                 submit = '' #HTMLSUBMIT
 
-                print_value = list(os.values())[0]
-                ret_os_status = list(os.values('status'))[0]['status']
+
+                print_value = model_to_dict(os)
+                print_value = os_form(print_value)
+                ret_os_status = print_value['Status']
 
                 # ch cp ou adj cp
                 if (1 in nome_funcao or 2 in nome_funcao):
@@ -286,7 +289,7 @@ def visualizarOS(request, os_id):
                 # cmt pel ou ch classe
                 else:
                     print("CMT PEL / CH CL")
-                    ret_os_classe = list(os.values('classe'))[0]['classe']
+                    ret_os_classe = print_value['Classe']
 
                     if (ret_os_classe in classe):
                         # cmt pel
