@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo
+from .forms import OrdemServicoConjunto, OrdemServicoDireto, OrdemServicoSuprimento, ConsultaOrdemServico, Tipo, MedidasCorretivas
 from .models import Sistema, OrdemDeServico
 from login.models import Funcao
 from datetime import datetime, timedelta
@@ -69,7 +69,7 @@ def criarordemservico(request, tipo, classe):
     if([classe, 4] in permissions):
         if request.method == 'POST':
             if int(tipo) == 0: #Apoio em Conjunto
-                form = OrdemServicoConjunto(request.POST)
+                form = OrdemServicoConjunto(request.POST,classe=classe)
                 if form.is_valid():
                     instance = form.save(commit=False)
                     
@@ -143,7 +143,7 @@ def criarordemservico(request, tipo, classe):
                 form = None
         else:
             if int(tipo) == 0:
-                form = OrdemServicoConjunto()
+                form = OrdemServicoConjunto(classe=classe)
             elif int(tipo) == 1:
                 form = OrdemServicoDireto(classe=classe)
             elif int(tipo) == 2:
@@ -197,62 +197,71 @@ def caixadeentrada(request):
 def visualizarOS(request, os_id):
     os = getOSfromId(os_id)
     permissions = getPermissions(request.user)
+    print_value = list(os.values())[0]
 
     if request.method == 'POST':
         print(permissions)
         print(request.POST)
         #TODO TRATAR RECEBIMENTO DOS FORMS
         chaves = request.POST.keys()
-        if os:
-            status_os = list(os.values('status'))[0]['status']
-            ret_os_classe = list(os.values('classe'))[0]['classe']
+        print(chaves)
+        if('medidas_corretivas' in chaves):
+            print(request.POST['medidas_corretivas'])
+        else:
+            if os:
+                status_os = list(os.values('status'))[0]['status']
+                ret_os_classe = list(os.values('classe'))[0]['classe']
 
-            if(status_os in [1, 10]):
-                #CHCP
-                p = [x[1] for x in permissions]
-                if 1 in p:
-                    print("STATUS " + str(status_os))
-                    incrementarStatus(os, status_os)
-                else:
-                    return render(request, "ordemDeServico/semPermissao.html")
-            if(status_os in [2, 3, 4, 5, 6]):
-                #CMT PEL
-                if [ret_os_classe, 3] in permissions:
-                    print("STATUS " + str(status_os))
-                    incrementarStatus(os, status_os)
-                else:
-                    return render(request, "ordemDeServico/semPermissao.html")
-            elif(status_os in [7, 8]):
-                #CMT PEL
-                if [ret_os_classe, 3] in permissions:
-                    sucesso = request.POST.get('testesucesso')
-                    print(sucesso)
-                    if(sucesso == 'sim'): #SIM 
-                        print("SIM")
-                        #RENDER NEW FORM
-                        #incrementarStatus(os, 8)
+                if(status_os in [1, 10]):
+                    #CHCP
+                    p = [x[1] for x in permissions]
+                    if 1 in p:
+                        print("STATUS " + str(status_os))
+                        incrementarStatus(os, status_os)
                     else:
-                        print("NAO")
-                        #RENDER NEW FORM
-                        #if(status_os == 7):
-                        #    incrementarStatus(os, 7)
+                        return render(request, "ordemDeServico/semPermissao.html")
+                if(status_os in [2, 3, 4, 5, 6]):
+                    #CMT PEL
+                    if [ret_os_classe, 3] in permissions:
+                        print("STATUS " + str(status_os))
+                        incrementarStatus(os, status_os)
+                    else:
+                        return render(request, "ordemDeServico/semPermissao.html")
+                elif(status_os in [7, 8]):
+                    #CMT PEL
+                    if [ret_os_classe, 3] in permissions:
+                        sucesso = request.POST.get('testesucesso')
+                        print(sucesso)
+                        if(sucesso == 'sim'): #SIM
+                            print("SIM")
+                            #RENDER NEW FORM
+                            #incrementarStatus(os, 8)
+                        else:
+                            print("NAO")
+                            #RENDER NEW FORM
+                            medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
+                            form_consulta = MedidasCorretivas() #FORM CIENTE
+                            submit = '<button name="status" value="' + str(status_os) + '" type="submit">Salvar</button>'
+                            return render(request, 'ordemDeServico/visualizar.html', {'ordemDeServico': print_value, 'form_consulta': form_consulta, 'submit': submit})
+                            #if(status_os == 7):
+                            #    incrementarStatus(os, 7)
+                        print("STATUS " + str(status_os))
+
+                    else:
+                        return render(request, "ordemDeServico/semPermissao.html")
+
+                elif(status_os in [9]):
+                    #CHCL
+                    if [ret_os_classe, 4] in permissions:
+                        incrementarStatus(os, 9)
+                    else:
+                        return render(request, "ordemDeServico/semPermissao.html")
                     print("STATUS " + str(status_os))
-     
+
                 else:
                     return render(request, "ordemDeServico/semPermissao.html")
 
-            elif(status_os in [9]):
-                #CHCL
-                if [ret_os_classe, 4] in permissions:
-                    incrementarStatus(os, 9)
-                else:
-                    return render(request, "ordemDeServico/semPermissao.html")
-                print("STATUS " + str(status_os))
-            
-            else:
-                return render(request, "ordemDeServico/semPermissao.html")
-                        
-        return redirect("/ordemservico/todo")
+            return redirect("/ordemservico/todo")
     else:
         funcao = getFuncaoMilitar(request.user)
         classe = funcao.values('classe')
@@ -270,6 +279,7 @@ def visualizarOS(request, os_id):
                 form_consulta = '' #FORM CIENTE
                 submit = '' #HTMLSUBMIT
 
+                ret_os_status = list(os.values('status'))[0]['status']
 
                 print_value = model_to_dict(os)
                 print_value = os_form(print_value)
@@ -350,8 +360,9 @@ def consultarOS(request):
         form = ConsultaOrdemServico()
         data = {}
     for p in data:
-       j=int(p['sistema_id'])
-       p['sistema_id']=sistema[j]['descricao']
+       if p['sistema_id']:
+          j=int(p['sistema_id']) - 1
+          p['sistema_id']=sistema[j]['descricao']
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
        j=int(p['tipo'])
