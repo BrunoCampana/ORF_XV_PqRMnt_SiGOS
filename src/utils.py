@@ -1,10 +1,10 @@
-from ordemDeServico.models import Sistema, OrdemDeServico
+from ordemDeServico.models import Sistema, OrdemDeServico, STATUS_DATE
 from login.models import Funcao
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 def getNomeMilitar(id):
@@ -33,7 +33,7 @@ def generateOSNr(tipo, classe):
         return 1
     recent_os = recent_os_list[0]
     recent_date = recent_os['abertura_os_date']
-    now_date = datetime.now() - timedelta(hours=4)
+    now_date = datetime.now()
     print(recent_date)
     if now_date.year > recent_date.year:
         return 1
@@ -64,9 +64,13 @@ def meu_mudar_senha(form, request):
 		login(request, user)
 
 def incrementarStatus(os, status):
-    os = os.get()
+    new_dict = {}
+    new_dict[STATUS_DATE[status]] = datetime.now()
+    new_dict["status"] = status + 1
+    os.update(**new_dict)
+    '''os = os.get()
     os.status = status + 1
-    os.save()
+    os.save()'''
 
 def getPermissions(user):
     funcao = getFuncaoMilitar(user)
