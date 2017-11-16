@@ -186,7 +186,6 @@ def caixadeentrada(request):
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
-          print("j: " + str(j) + "Tipo choiches " + TIPO_CHOICES[j][1] + " tipo do bd " + str(p['tipo']))
           p['tipo']=TIPO_CHOICES[j][1]
         data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
@@ -398,7 +397,7 @@ def consultarOS(request):
        j=int(p['status'])
        p['status']=STATUS_CHOICES[j-1][1]
        j=int(p['tipo'])
-       p['tipo']=TIPO_CHOICES[j-1][1]
+       p['tipo']=TIPO_CHOICES[j][1]
     return render(request, 'ordemDeServico/consulta.html', {'form_consulta': form, 'data': data})
 
 def os_print(db_dict):
@@ -407,7 +406,7 @@ def os_print(db_dict):
                 'realizacao_date': 'Data de realização',
                 'classe': 'Classe',
                 'remanutencao_date': 'Data de remanutenção',
-                'custo_total': 'Custo total',
+                'custo_total': 'Custo total (em R$)',
                 'medidas_corretivas': 'Medidas corretivas',
                 'quantidade': 'Quantidade',
                 'subsistemas_manutenidos': 'Subsistemas manutenidos',
@@ -445,7 +444,8 @@ def os_print(db_dict):
              }
 
     print_dict = {}
-    militar = InformacaoMilitar.objects.all()
+    sistema = Sistema.object.all().values()
+    print (militar)
     for key in db_dict:
         if db_dict[key] and key is not 'id':
             if key == 'pit':
@@ -459,7 +459,9 @@ def os_print(db_dict):
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
-
+            elif key == 'sistema_id':
+               j=int(db_dict['sistema_id'])
+               db_dict['sistema_id']=sistema[j-1]['descricao']
             else:
                 value = db_dict[key]
             print_dict[os_names[key]] = value
