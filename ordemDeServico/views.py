@@ -347,7 +347,7 @@ def consultarOS(request):
         form = ConsultaOrdemServico()
         data = {}
     for p in data:
-       if p['sistema_id']:
+       if p['sistema_id'] is not None:
           j=int(p['sistema_id'])
           p['sistema_id']=sistema[j]['descricao']
        j=int(p['status'])
