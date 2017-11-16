@@ -200,8 +200,7 @@ def visualizarOS(request, os_id):
     permissions = getPermissions(request.user)
     ret_os_classe = list(os.values('classe'))[0]['classe']
     status_os = list(os.values('status'))[0]['status']
-    os = os.get()
-    print_value = model_to_dict(os)
+    print_value = model_to_dict(os.get())
 
     if request.method == 'POST':
         print(permissions)
