@@ -44,15 +44,20 @@
 ## Criar o banco de dados:
 ```bash
   mysql -u root -p         # entrar com a senha root
-  >> create database sigos;
+  >> create database <nome_do_banco>;
   ```
   
-# Alguns comandos úteis do django:
+## Configurar Django
+  Alterar o arquivo settings.py:
+    Em ALLOWED_HOSTS inserir o ip do host;
+    Em DATABASE anterar NAME para <nome_do_banco>, USER e PASSWORD para o usuário e senha que acessará o banco;
+    Alterar DEBUG para false;
+    Executar os comandos:
 ```bash
   python3 manage.py makemigrations   # Responsável por criar novas migrações de acordo com mudanças observadas nos modelos
   python3 manage.py migrate          # Realiza as migrações de fato
-  python3 manage.py runserver        # Roda a aplicação
   python3 manage.py createsuperuser  # Cria um usuário com privilégios de administrador
+  python3 manage.py runserver        # Roda a aplicação
   ```
 
 
