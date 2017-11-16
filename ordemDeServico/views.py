@@ -182,13 +182,14 @@ def caixadeentrada(request):
        
         for p in data:
           if p['sistema_id']:
-              j=int(p['sistema_id']) - 1
-              p['sistema_id']=sistema[j]['descricao']
+              j=int(p['sistema_id'])
+              p['sistema_id']=sistema[j-1]['descricao']
           j=int(p['status'])
           p['status']=STATUS_CHOICES[j-1][1]
           j=int(p['tipo'])
-          p['tipo']=TIPO_CHOICES[j-1][1]
-        #data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+          print("j: " + str(j) + "Tipo choiches " + TIPO_CHOICES[j][1] + " tipo do bd " + str(p['tipo']))
+          p['tipo']=TIPO_CHOICES[j][1]
+        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
@@ -210,7 +211,7 @@ def visualizarOS(request, os_id):
         print(chaves)
         if('medidas_corretivas' in chaves): #TEST NAO
             medidas_corretivas_os = list(os.values('medidas_corretivas'))[0]['medidas_corretivas']
-            medidas_corretivas = medidas_corretivas_os + ';' + request.POST['medidas_corretivas']
+            medidas_corretivas = medidas_corretivas_os + request.POST['medidas_corretivas'] + "; "
             form = MedidasCorretivas({'medidas_corretivas': medidas_corretivas}, instance = os.get())
             if(form.is_valid()):
                 form.save()
@@ -460,7 +461,6 @@ def os_print(db_dict):
                     value = "Apoio em suprimento"
             elif key == 'ch_classe' or key == 'cmt_pel' or  key == 'ch_cp':
                value = InformacaoMilitar.objects.get(user=db_dict[key]).posto + ' ' + InformacaoMilitar.objects.get(user=db_dict[key]).nome_guerra
-
 
             else:
                 value = db_dict[key]
