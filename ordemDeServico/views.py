@@ -6,6 +6,28 @@ from login.models import Funcao
 from datetime import datetime, timedelta
 from src.utils import getFuncaoMilitar, getIDCmtPel, getIDChCP, getOSfromId, generateOSNr, meu_login_required
 
+TIPO_CHOICES = (
+    (0, 'Apoio em conjunto'),
+    (1, 'Apoio direto'),
+    (2, 'Apoio em suprimento'),
+)
+
+STATUS_CHOICES = (
+    (1, 'Aguardando ciente de abertura'),
+    (2, 'Aguardando inspeção'),
+    (3, 'Realizando inspeção'),
+    (4, 'Aguardando manutenção'),
+    (5, 'Em manutenção'),
+    (6, 'Aguardando testes'),
+    (7, 'Testes em execução'),
+    (8, 'Remanutenção'),
+    (9, 'Aguardando remessa'),
+    (10, 'Fechada - aguardando ciente'),
+    (11, 'Fechada - ciente dado'),
+)
+
+
+
 # Create your views here.
 
 @meu_login_required
@@ -137,7 +159,7 @@ def criarordemservico(request, tipo, classe):
 def caixadeentrada(request):
     alldata = OrdemDeServico.objects.all()
     funcao = getFuncaoMilitar(request.user)
-
+    sistema = Sistema.objects.all().values()
     classe = funcao.values('classe')
     nome_funcao= funcao.values('nome_funcao')
 
@@ -155,8 +177,15 @@ def caixadeentrada(request):
                 data = data + list(alldata.filter(classe=p[0], status__in=[2, 3, 4, 5, 6, 7, 8]).values())
             elif p[1] == 4: #CH CL
                 data = data + list(alldata.filter(classe=p[0], status=9).values())
-
-        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
+       
+        for p in data:
+          j=int(p['sistema_id'])
+          p['sistema_id']=sistema[j]['descricao']
+          j=int(p['status'])
+          p['status']=STATUS_CHOICES[j-1][1]
+          j=int(p['tipo'])
+          p['tipo']=TIPO_CHOICES[j-1][1]
+#        data.sort(key=lambda x: x['abertura_os_date'], reverse=True)
         data.sort(key=lambda x: x['status'], reverse=False)
         return render(request, 'ordemDeServico/caixa.html', {'data': data})
     return redirect('/login')
